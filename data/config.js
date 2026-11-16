@@ -18,10 +18,9 @@ window.SITE_CONFIG = {
   trailer3Label: "Trailer 3 — expected",
 
   // Ссылки (заменить на реальные)
-  discordUrl: "https://discord.gg/42dQMruxzx",
   redditUrl: "#",
   youtubeUrl: "https://www.youtube.com/@leonidainteract",
-  xUrl: "https://x.com/LeonidaInteract",
+  xUrl: "https://x.com/GTAHUBS",
 
   // Cloudflare Web Analytics: cookieless, поэтому consent-баннер не нужен (в отличие от GA4 —
   // тот для EU-трафика без баннера ставить нельзя). Токен берётся в дашборде Cloudflare

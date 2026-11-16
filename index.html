@@ -9,7 +9,7 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="dark">
-  <title data-i18n="site.title">Leonida Interactive — GTA 6 Map, Wiki &amp; Guides</title>
+  <title data-i18n="site.title">GTAHUB — GTA 6 Map, Wiki &amp; Guides</title>
   <meta name="description" content="Interactive GTA 6 map of Leonida and 2100+ wiki pages in 11 languages: weapons, characters, locations, guides. GTA 6 is out on November 19, 2026." data-i18n-content="site.description">
   <meta name="robots" content="max-image-preview:large">
   <!-- Подтверждение прав в Яндекс Вебмастере (19-09). Метатег, а не HTML-файл: Cloudflare Pages
@@ -35,7 +35,7 @@
   <link rel="alternate" hreflang="ko" href="https://leonidainteractive.com/ko/">
   <link rel="alternate" hreflang="x-default" href="https://leonidainteractive.com/">
   <link rel="canonical" href="https://leonidainteractive.com/" data-i18n-canonical="canonical">
-  <link rel="alternate" type="application/rss+xml" title="Leonida Interactive" href="/rss.xml">
+  <link rel="alternate" type="application/rss+xml" title="GTAHUB" href="/rss.xml">
 
   <!-- OG/Twitter (23-08, деплой пульта на корень): без них шаринг главной в Discord/X давал голую
        ссылку, а по бренд-запросу Google держал сниппет старой заглушки stub/index.html. Формулировки = title/
@@ -43,9 +43,9 @@
        DEFAULT_OG_IMAGE), лежит в /img/ вики рядом с пультом на одном домене. og:url/og:title/
        og:description локализуются build-locale-home.js через data-i18n-canonical/-content. -->
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Leonida Interactive">
+  <meta property="og:site_name" content="GTAHUB">
   <meta property="og:url" content="https://leonidainteractive.com/" data-i18n-canonical="canonical">
-  <meta property="og:title" content="Leonida Interactive — GTA 6 Map, Wiki &amp; Guides" data-i18n-content="site.title">
+  <meta property="og:title" content="GTAHUB — GTA 6 Map, Wiki &amp; Guides" data-i18n-content="site.title">
   <meta property="og:description" content="Interactive GTA 6 map of Leonida and 2100+ wiki pages in 11 languages: weapons, characters, locations, guides. GTA 6 is out on November 19, 2026." data-i18n-content="site.description">
   <meta property="og:image" content="https://leonidainteractive.com/img/media/jason-and-lucia-01-with-logos-landscape-art.webp">
   <meta name="twitter:card" content="summary_large_image"> <!-- twitter:title/description/image Twitter берёт из og:* -->
@@ -86,22 +86,21 @@
       {
         "@type": "Organization",
         "@id": "https://leonidainteractive.com/#organization",
-        "name": "Leonida Interactive",
+        "name": "GTAHUB",
         "url": "https://leonidainteractive.com/",
         "logo": "https://leonidainteractive.com/logo-512.png",
         "sameAs": [
           "https://www.youtube.com/@leonidainteract",
           "https://www.instagram.com/leonidainteractive/",
-          "https://www.tiktok.com/@leonidainteractive",
-          "https://discord.gg/42dQMruxzx",
-          "https://x.com/LeonidaInteract"
+          "https://www.tiktok.com/@GTA",
+          "https://x.com/GTAHUBS"
         ]
       },
       {
         "@type": "WebSite",
         "@id": "https://leonidainteractive.com/#website",
-        "name": "Leonida Interactive",
-        "alternateName": "Leonida Interactive Wiki",
+        "name": "GTAHUB",
+        "alternateName": "GTAHUB Wiki",
         "url": "https://leonidainteractive.com/",
         "publisher": { "@id": "https://leonidainteractive.com/#organization" },
         "inLanguage": "en"
@@ -135,7 +134,7 @@
   <!-- ===== TOP BAR ===== -->
   <header class="topbar">
     <div class="topbar-left">
-      <a class="logo" href="#"><span class="logo-a">Leonida</span><span class="logo-b">Interactive</span><span class="logo-c">HUB</span></a>
+      <a class="logo" href="#"><span class="logo-a">GTA</span><span class="logo-b">HUB</span></a>
       <!-- Переключатель языка (раунд-15, 4 локали с раунда-19) — дропдаун как в вики
            (LangSwitcher.astro, details/summary без JS): кнопка показывает ТЕКУЩИЙ язык, остальные
            три — пункты меню. Локали — статичные файлы (index.html / ru|es|pt-br/index.html).
@@ -168,16 +167,16 @@
       </button>
     </div>
     <div class="topbar-center">
-      <a class="btn btn-discord" href="#discord" id="discordTop"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg><span data-i18n="nav.discord">Join Discord</span></a>
+      <a class="btn btn-x" href="https://x.com/GTAHUBS" id="xTop" target="_blank" rel="noopener noreferrer"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span data-i18n="nav.x">Follow on X</span></a>
       <button class="btn btn-primary" id="subBtn" disabled title="Sign in with Google" data-i18n-title="nav.signIn" data-i18n="nav.signIn">Sign in with Google</button>
       <a class="btn btn-coffee" id="supportBtn" href="#" title="Buy us a coffee" data-i18n-title="nav.supportTitle"><span class="btn-emoji" aria-hidden="true">☕ </span><span data-i18n="nav.support">Support</span></a>
     </div>
     <div class="topbar-right">
-      <button class="ca-frame" id="caFrame" type="button" title="Copy contract address" aria-label="Live contract address leonidasoon. Click to copy.">
+      <button class="ca-frame" id="caFrame" type="button" title="Copy contract address" aria-label="Live contract address GTAHUBPUMP. Click to copy.">
         <span class="ca-live" aria-hidden="true"></span>
         <span class="ca-kicker">Live</span>
         <span class="ca-label">CA</span>
-        <span class="ca-value" id="caValue">leonidasoon</span>
+        <span class="ca-value" id="caValue">GTAHUBPUMP</span>
       </button>
       <button class="fan-badge" id="legalBadge" data-i18n="nav.fanBadge">Independent fan-made</button>
     </div>
@@ -756,7 +755,7 @@
     </div>
     <!-- Дальние силуэты — кукурузник, вертолёт и яхта, изредка пролетают/проплывают за горизонтом (см. cdoFlyPlane/cdoFlyHeli/cdoSailYacht) -->
     <svg class="cdo-plane" viewBox="0 0 24 24" aria-hidden="true"><path transform="rotate(90 12 12)" d="M21,16V14L13,9V3.5C13,2.67 12.33,2 11.5,2C10.67,2 10,2.67 10,3.5V9L2,14V16L10,13.5V19L7.5,20.5V22L11.5,21L15.5,22V20.5L13,19V13.5L21,16Z"/></svg>
-    <!-- Второй самолёт — выше, над солнцем, на уровне надписи Leonida Interactive -->
+    <!-- Второй самолёт — выше, над солнцем, на уровне надписи GTAHUB -->
     <svg class="cdo-plane cdo-plane-high" viewBox="0 0 24 24" aria-hidden="true"><path transform="rotate(90 12 12)" d="M21,16V14L13,9V3.5C13,2.67 12.33,2 11.5,2C10.67,2 10,2.67 10,3.5V9L2,14V16L10,13.5V19L7.5,20.5V22L11.5,21L15.5,22V20.5L13,19V13.5L21,16Z"/></svg>
     <svg class="cdo-heli" viewBox="0 0 56 26" aria-hidden="true">
       <rect x="1" y="3" width="30" height="2"/>
@@ -799,13 +798,13 @@
        (CORE_SPEC, «Раскладка пульта»). Раскрытие нативное, без единой строки JS. -->
   <footer class="site-footer">
     <details class="home-about">
-      <summary><h1 data-i18n="about.h1">Leonida Interactive — GTA 6 Interactive Map &amp; Wiki</h1></summary>
+      <summary><h1 data-i18n="about.h1">GTAHUB — GTA 6 Interactive Map &amp; Wiki</h1></summary>
       <div class="home-about__body">
-        <p data-i18n="about.p1">Leonida Interactive is a fan-made GTA 6 hub. The interactive map of the state of Leonida comes with a drive mode, collectible cards, comparisons with earlier GTA maps and a story board. Explore the site and earn Respect. Plus a wiki with 2100 pages in 11 languages and daily news.</p>
+        <p data-i18n="about.p1">GTAHUB is a fan-made GTA 6 hub. The interactive map of the state of Leonida comes with a drive mode, collectible cards, comparisons with earlier GTA maps and a story board. Explore the site and earn Respect. Plus a wiki with 2100 pages in 11 languages and daily news.</p>
         <p data-i18n="about.p2">Explore Vice City and the rest of Leonida, read about Lucia Caminos and Jason Duval, and check vehicles, weapons, gangs and a breakdown of every trailer.</p>
-        <p data-i18n="about.p3">GTA 6 releases on November 19, 2026 for PS5 and Xbox Series X|S. Leonida Interactive is a fan project, not affiliated with Rockstar Games or Take-Two Interactive.</p>
+        <p data-i18n="about.p3">GTA 6 releases on November 19, 2026 for PS5 and Xbox Series X|S. GTAHUB is a fan project, not affiliated with Rockstar Games or Take-Two Interactive.</p>
         <p class="home-about__meta">
-          © <span id="footerYear"></span> Leonida Interactive ·
+          © <span id="footerYear"></span> GTAHUB ·
           <a href="/wiki/about/" data-i18n="about.linkAbout">About</a> ·
           <a href="/wiki/methodology/" data-i18n="about.linkMethodology">Methodology</a> ·
           <a href="#" id="footerContact" class="footer-contact" data-i18n="about.linkContact">Contact</a>
@@ -818,12 +817,7 @@
          адреса и те же контуры, что в wiki-src/src/lib/socials.ts — пульт вне Astro, общего
          импорта с ним нет (тот же случай, что Organization выше). Меняется хэндл — правится
          здесь и там. -->
-    <nav class="footer-socials" aria-label="Leonida Interactive on social networks">
-      <a href="https://www.youtube.com/@leonidainteract" aria-label="YouTube" title="YouTube" target="_blank" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg></a>
-      <a href="https://www.tiktok.com/@leonidainteractive" aria-label="TikTok" title="TikTok" target="_blank" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16.6 5.8a4.3 4.3 0 0 1-1-2.8h-3.1v12.4a2.6 2.6 0 1 1-1.9-2.5V9.7a5.7 5.7 0 1 0 5 5.6V9.1a7.3 7.3 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.3-1.6z"/></svg></a>
-      <a href="https://x.com/LeonidaInteract" aria-label="X" title="X" target="_blank" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.9 2H22l-7.1 8.1L23.2 22h-6.6l-5.1-6.7L5.6 22H2.5l7.6-8.7L1.2 2h6.8l4.6 6.1L18.9 2zm-1.1 18.1h1.7L7.3 3.8H5.4l12.4 16.3z"/></svg></a>
-      <a href="https://www.instagram.com/leonidainteractive/" aria-label="Instagram" title="Instagram" target="_blank" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.3-1-.4-2.2-.1-1.3-.1-1.7-.1-4.9s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.3 2.2-.4 1.3-.1 1.7-.1 4.9-.1zm0 3.2a6.6 6.6 0 1 0 0 13.2 6.6 6.6 0 0 0 0-13.2zm0 10.9a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm8.4-11.2a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg></a>
-    </nav>
+
     <div class="footer-line">
       <a href="/wiki/about/">About</a> · <a href="/wiki/contact/">Contact</a> · <a href="/wiki/privacy/">Privacy</a> · <a href="/wiki/terms/">Terms</a>
     </div>

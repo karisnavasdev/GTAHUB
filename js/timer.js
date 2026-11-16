@@ -80,8 +80,8 @@
   }
   tick(); setInterval(tick, 1000);
 
-  const d = document.getElementById('discordTop');
-  if (d) d.href = cfg.discordUrl;
+  const xBtn = document.getElementById('xTop');
+  if (xBtn && cfg.xUrl) xBtn.href = cfg.xUrl;
 
   const footerYear = document.getElementById('footerYear');
   if (footerYear) footerYear.textContent = new Date().getFullYear();

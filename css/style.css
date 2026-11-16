@@ -56,7 +56,8 @@ a{color:inherit;text-decoration:none}
 .guide-btn:hover{box-shadow:0 0 10px rgba(255,203,107,.6)}
 .btn{display:inline-block;padding:.42rem .95rem;border-radius:6px;font-weight:700;font-size:.82rem;
   border:none;cursor:pointer;font-family:var(--body)}
-.btn-discord{background:#5865F2;color:#fff;box-shadow:0 0 14px rgba(88,101,242,.5);display:inline-flex;align-items:center;gap:.4rem}
+.btn-x{background:#000;color:#fff;border:1px solid rgba(255,255,255,.4);box-shadow:0 0 14px rgba(255,255,255,.16);display:inline-flex;align-items:center;gap:.4rem}
+.btn-x:hover{border-color:#fff;box-shadow:0 0 16px rgba(255,255,255,.32)}
 .btn-ico{width:1.05em;height:1.05em;fill:currentColor;flex:none}
 .btn-primary{background:var(--pink);color:#fff;box-shadow:0 0 14px rgba(255,46,136,.5)}
 .btn-primary[disabled]{opacity:.55;box-shadow:none;cursor:not-allowed}
@@ -1203,7 +1204,7 @@ html[lang="es"] .sun-mini-label,html[lang="pt-br"] .sun-mini-label{font-size:.95
   fill:rgba(18,8,46,.55);pointer-events:none;
   --cdo-off-l:calc(-100% - 20px);--cdo-off-r:110vw}
 .cdo-plane{top:calc(var(--cdo-horizon) - 14%);width:23.2px;animation:cdoFlyPlane 72s linear infinite}
-/* Второй самолёт — высокий пролёт, обязательно НИЖЕ рамки "Leonida Interactive" (её нижний край
+/* Второй самолёт — высокий пролёт, обязательно НИЖЕ рамки "GTAHUB" (её нижний край
    ~210px при любой ширине экрана — упирается в clamp-потолок font-size у .cdo-title), top в px, не в %. */
 .cdo-plane-high{top:230px;width:19px;animation:cdoFlyPlane 99s linear infinite backwards;animation-delay:40s}
 /* -4% (не -15%) — вертолёт всегда заметно ниже нижнего самолёта (-14%), без риска пересечься. */
@@ -2512,7 +2513,7 @@ a.pb-frame:hover{box-shadow:inset 0 0 0 1px rgba(0,0,0,.5),0 0 14px var(--pb-acc
      «CHARACTERS» (70px при .98rem) обрезалось прямо посреди слова (16-08(12)). .7rem с узким
      трекингом — 45px, влезает самое длинное из четырёх названий. */
   .wt-label{font-size:.7rem;letter-spacing:.02em}
-  /* 26-09 (владелец): «Leonida Interactive HUB» в одну строку, как на десктопе (было две:
+  /* 26-09 (владелец): «GTAHUB HUB» в одну строку, как на десктопе (было две:
      Leonida сверху, InteractiveHUB под ним). nowrap — чтобы узкий экран не переносил хвост. */
   .logo{display:block;font-size:1.1rem;line-height:1.15;flex:none;white-space:nowrap}
   .fan-badge{display:block;font-size:.52rem;padding:.22rem .4rem;white-space:normal;text-align:center;max-width:6.2rem;line-height:1.3}
@@ -3088,7 +3089,7 @@ a.pb-frame:hover{box-shadow:inset 0 0 0 1px rgba(0,0,0,.5),0 0 14px var(--pb-acc
   .topbar{border-bottom-color:rgba(255,46,136,.6);box-shadow:0 1px 10px rgba(255,46,136,.25)}
   /* Кнопки подвала: 01-10 (владелец) — Discord, Sign in и Support в ОДИН ряд (было: две в ряд,
      Support под ними). Равные трети, кегль чуть мельче; длинная подпись локали режется многоточием. */
-  .mobile-tail #discordTop,.mobile-tail #subBtn,.mobile-tail .user-menu,.mobile-tail #supportBtn{flex:1 1 0;min-width:0}
+  .mobile-tail #xTop,.mobile-tail #subBtn,.mobile-tail .user-menu,.mobile-tail #supportBtn{flex:1 1 0;min-width:0}
 
   /* Таймер: переливающийся градиент. Слой солнца (radial) стоит на месте, едет только
      нижний линейный слой втрое шире виджета — цвета перетекают, а не мигают. */

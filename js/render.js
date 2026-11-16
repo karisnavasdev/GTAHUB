@@ -572,7 +572,7 @@ window.Render = {
       <p><strong>${t('Realistic layer')}</strong> — ${t('MAP LAYER repaints the same area in an AI-made realistic style. Drag the handle to wipe between the two versions.')}</p>
       <p><strong>${t('Radio')}</strong> — ${t('Vice FM and Leonida Talk play from the corner widget. Hit the sunset icon for chill mode — a fullscreen player with a live music visualizer.')}</p>
       <h4 class="aw-shot-group">${t('NAVIGATION')}</h4>
-      <p><strong>${t('Top bar')}</strong> — ${t('release countdown, Join Discord, Support.')}</p>
+      <p><strong>${t('Top bar')}</strong> — ${t('release countdown, Follow on X, Support.')}</p>
       <p><strong>${t('Left column')}</strong> — ${t('radio widget, Video of the Day, Official trailer &amp; screenshots.')}</p>
       <p><strong>${t('Center')}</strong> — ${t('the interactive map.')}</p>
       <p><strong>${t('Right column')}</strong> — ${t('your Respect &amp; Community, Leonida Wiki, Spotlight.')}</p>
