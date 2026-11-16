@@ -1,0 +1,302 @@
+{
+  "parents": [
+    {
+      "id": "vice-city",
+      "name": "Vice City",
+      "x": null,
+      "y": null
+    },
+    {
+      "id": "vice-dale-county",
+      "name": "Vice-Dale County",
+      "x": null,
+      "y": null
+    },
+    {
+      "id": "leonida-keys",
+      "name": "Leonida Keys",
+      "x": null,
+      "y": null
+    },
+    {
+      "id": "grassrivers",
+      "name": "Grassrivers",
+      "x": null,
+      "y": null
+    },
+    {
+      "id": "port-gellhorn",
+      "name": "Port Gellhorn",
+      "x": null,
+      "y": null
+    },
+    {
+      "id": "mount-kalaga",
+      "name": "Mount Kalaga",
+      "x": null,
+      "y": null
+    },
+    {
+      "id": "ambrosia",
+      "name": "Ambrosia",
+      "x": null,
+      "y": null
+    },
+    {
+      "id": "leonida",
+      "name": "Leonida",
+      "x": null,
+      "y": null
+    }
+  ],
+  "regions": [
+    {
+      "id": "ambrosia",
+      "name": "Ambrosia",
+      "parentId": "ambrosia",
+      "x": -2855.144515879574,
+      "y": 3668.5,
+      "count": 90
+    },
+    {
+      "id": "ambrosia-county",
+      "name": "Ambrosia County",
+      "parentId": "ambrosia",
+      "x": -3352.179678488624,
+      "y": 4765.7435,
+      "count": 3
+    },
+    {
+      "id": "catalan-key",
+      "name": "Catalan Key",
+      "parentId": "vice-city",
+      "x": -527.6805418182458,
+      "y": -2600.731,
+      "count": 7
+    },
+    {
+      "id": "crosstown-vice-city",
+      "name": "Crosstown, Vice City",
+      "parentId": "vice-city",
+      "x": -476.1600854788092,
+      "y": 813.37716486772,
+      "count": 16
+    },
+    {
+      "id": "downtown-vice-city",
+      "name": "Downtown, Vice City",
+      "parentId": "vice-city",
+      "x": -525.2426768569112,
+      "y": -100,
+      "count": 53
+    },
+    {
+      "id": "grassrivers",
+      "name": "Grassrivers",
+      "parentId": "grassrivers",
+      "x": -4058.21330428054,
+      "y": -3663.5737167778884,
+      "count": 6
+    },
+    {
+      "id": "hamlet",
+      "name": "Hamlet",
+      "parentId": "grassrivers",
+      "x": -2565.7858464882324,
+      "y": -3378,
+      "count": 51
+    },
+    {
+      "id": "kelly-county",
+      "name": "Kelly County",
+      "parentId": "port-gellhorn",
+      "x": -5101.962391445919,
+      "y": 3483.8335,
+      "count": 26
+    },
+    {
+      "id": "key-lento",
+      "name": "Key Lento",
+      "parentId": "leonida-keys",
+      "x": -2695.748207079955,
+      "y": -6063.266659476924,
+      "count": 142
+    },
+    {
+      "id": "la-perle",
+      "name": "La Perle",
+      "parentId": "vice-city",
+      "x": -1025.0095366182923,
+      "y": 1094.2715342500987,
+      "count": 1
+    },
+    {
+      "id": "la-perle-vice-city",
+      "name": "La Perle, Vice City",
+      "parentId": "vice-city",
+      "x": -891.5692866017563,
+      "y": 1501.1266724979741,
+      "count": 36
+    },
+    {
+      "id": "leonard-county",
+      "name": "Leonard County",
+      "parentId": "ambrosia",
+      "x": -15,
+      "y": 4214.584509214166,
+      "count": 11
+    },
+    {
+      "id": "leonida",
+      "name": "Leonida",
+      "parentId": "leonida",
+      "x": -2690.4359999999997,
+      "y": -35.2396004917,
+      "count": 19
+    },
+    {
+      "id": "leonida-keys",
+      "name": "Leonida Keys",
+      "parentId": "leonida-keys",
+      "x": -4912.586,
+      "y": -6897.69148857861,
+      "count": 41
+    },
+    {
+      "id": "little-cuba-vice-city",
+      "name": "Little Cuba, Vice City",
+      "parentId": "vice-city",
+      "x": -1199.216444754945,
+      "y": -82.08542771808979,
+      "count": 15
+    },
+    {
+      "id": "mariana-county",
+      "name": "Mariana County",
+      "parentId": "grassrivers",
+      "x": -4248.106599027255,
+      "y": -3394.3565555023433,
+      "count": 10
+    },
+    {
+      "id": "peacock-bay-vice-city",
+      "name": "Peacock Bay, Vice City",
+      "parentId": "vice-city",
+      "x": -1144.6523425374826,
+      "y": -2049.533337841777,
+      "count": 15
+    },
+    {
+      "id": "port-gellhorn",
+      "name": "Port Gellhorn",
+      "parentId": "port-gellhorn",
+      "x": -6493.415499999999,
+      "y": 3644.4052624067995,
+      "count": 150
+    },
+    {
+      "id": "port-vice-city",
+      "name": "Port Vice City",
+      "parentId": "vice-city",
+      "x": 797.0881180807932,
+      "y": -447.135,
+      "count": 21
+    },
+    {
+      "id": "prison-hamlet",
+      "name": "Prison, Hamlet",
+      "parentId": "grassrivers",
+      "x": -2721.001443539679,
+      "y": -2795.382,
+      "count": 7
+    },
+    {
+      "id": "rockridge-vice-city",
+      "name": "Rockridge, Vice City",
+      "parentId": "vice-city",
+      "x": -1357.1022169906685,
+      "y": 805.75,
+      "count": 36
+    },
+    {
+      "id": "shore-dr-vice-beach",
+      "name": "Shore Dr, Vice Beach",
+      "parentId": "vice-city",
+      "x": 1936.75,
+      "y": 468.25,
+      "count": 32
+    },
+    {
+      "id": "stockyard-vice-city",
+      "name": "Stockyard, Vice City",
+      "parentId": "vice-city",
+      "x": -487.07049577557336,
+      "y": 1392.8315,
+      "count": 64
+    },
+    {
+      "id": "tequesta-key",
+      "name": "Tequesta Key",
+      "parentId": "vice-city",
+      "x": -281.2551872768305,
+      "y": -1083.4134494842074,
+      "count": 14
+    },
+    {
+      "id": "tequesta-vice-city",
+      "name": "Tequesta, Vice City",
+      "parentId": "vice-city",
+      "x": -848.9601626388928,
+      "y": -1207.728944597146,
+      "count": 40
+    },
+    {
+      "id": "vice-beach",
+      "name": "Vice Beach",
+      "parentId": "vice-city",
+      "x": 1687,
+      "y": 1192.2633993007998,
+      "count": 251
+    },
+    {
+      "id": "vice-city",
+      "name": "Vice City",
+      "parentId": "vice-city",
+      "x": -1307.5877096282206,
+      "y": -193.449,
+      "count": 63
+    },
+    {
+      "id": "vice-city-international-airport",
+      "name": "Vice City International Airport",
+      "parentId": "vice-city",
+      "x": -2459.177534019466,
+      "y": -601.9887002482452,
+      "count": 24
+    },
+    {
+      "id": "vice-dale-county",
+      "name": "Vice-Dale County",
+      "parentId": "vice-dale-county",
+      "x": 589.1679650459138,
+      "y": 1095.5747526185974,
+      "count": 129
+    },
+    {
+      "id": "waning-sands",
+      "name": "Waning Sands",
+      "parentId": "ambrosia",
+      "x": -685.083275239496,
+      "y": 3509.3910129655205,
+      "count": 20
+    },
+    {
+      "id": "watson-bay",
+      "name": "Watson Bay",
+      "parentId": "grassrivers",
+      "x": -4805.240392927308,
+      "y": -3281.346747443931,
+      "count": 54
+    }
+  ]
+}

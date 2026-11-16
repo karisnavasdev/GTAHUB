@@ -1,0 +1,112 @@
+/* ===== RADIO WIDGET (Vice FM) =====
+   Отдельный файл (не в style.css) — этот же плеер грузит и wiki-src (RadioDock.astro) по
+   абсолютному пути /css/radio.css, единая точка правды для обоих сайтов на одном origin.
+   --ra-c/--chill-c — rgb-тройки, не финальные цвета: акцент виджета и кнопки чилла.
+   Vice FM = дефолт (розовый виджет / золотая кнопка). Leonida Talk инвертирует пару —
+   "архаичная" станция читается по цвету без единого доп. правила ниже (наследуется через var()). */
+.radio-widget{display:flex;align-items:center;justify-content:space-between;gap:.2rem;position:relative;
+  flex:0 0 auto;--ra-c:255,46,136;--chill-c:255,203,107;--ra-dim:#8a2a68;
+  background:linear-gradient(135deg,rgba(43,15,77,.9),rgba(122,29,94,.7));
+  border:1px solid rgba(var(--ra-c),.35);border-radius:8px;padding:.35rem .6rem}
+/* Leonida Talk = var(--orange), тот же оттенок что у рамки таймера — не отдельный "золотой", а переиспользование существующего акцента сайта */
+.radio-widget[data-station="leonida-talk"]{--ra-c:255,158,79;--chill-c:255,46,136;--ra-dim:#855238}
+.radio-widget[data-state="playing"]{border-color:rgb(var(--ra-c));box-shadow:0 0 18px rgba(var(--ra-c),.5)}
+.radio-widget[data-state="resume"]{border-color:var(--orange)}
+.radio-widget.flash{box-shadow:0 0 30px rgba(var(--ra-c),.85)}
+.radio-widget[data-station="leonida-talk"][data-state="playing"]{box-shadow:0 0 10px rgba(var(--ra-c),.35)}
+.radio-widget[data-station="leonida-talk"].flash{box-shadow:0 0 16px rgba(var(--ra-c),.6)}
+.radio-widget[data-state="loading"] .radio-toggle{animation:radioPulse 1s ease-in-out infinite}
+@keyframes radioPulse{50%{opacity:.5}}
+/* Бегущая подсветка рамки в состоянии off — приглашение нажать.
+   Крутим угол conic-gradient через @property, а не transform:rotate на самом
+   элементе — иначе прямоугольник (не квадрат) при повороте вылетает своими
+   углами далеко за пределы виджета ("квадрат крутится как сумасшедший"). */
+@property --chase-angle{syntax:'<angle>';inherits:false;initial-value:0deg}
+.radio-widget[data-state="off"]::before,.radio-widget[data-state="loading"]::before{content:"";position:absolute;inset:-1px;border-radius:9px;padding:1px;
+  box-sizing:border-box;
+  background:conic-gradient(from var(--chase-angle),transparent 0%,rgba(var(--ra-c),.5) 8%,rgba(255,255,255,.6) 12%,rgba(var(--ra-c),.5) 16%,transparent 35%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask-composite:exclude;
+  animation:radioChase 6s linear infinite;pointer-events:none}
+@keyframes radioChase{to{--chase-angle:360deg}}
+.radio-toggle{position:relative;background:none;border:none;cursor:pointer;color:var(--muted);font-size:.95rem;
+  display:flex;align-items:center;gap:.3rem;padding:0}
+/* .respect-pop ("+N RP" пузырь) теперь общий — инжектится js/respect.js, см. Respect.popup() */
+.radio-widget[data-state="playing"] .radio-toggle,.radio-widget[data-state="resume"] .radio-toggle{color:rgb(var(--ra-c))}
+.radio-ico{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex:0 0 auto;
+  border-radius:50%;border:1px solid rgba(var(--ra-c),.5);color:rgb(var(--ra-c));box-shadow:0 0 8px rgba(var(--ra-c),.3)}
+.radio-ico .ico-pause{display:none}
+.radio-widget[data-state="playing"] .radio-ico .ico-play{display:none}
+.radio-widget[data-state="playing"] .radio-ico .ico-pause{display:block}
+.radio-eq{display:flex;align-items:flex-end;gap:1px;height:10px;width:12px}
+.radio-eq i{flex:1;background:rgb(var(--ra-c));border-radius:1px;height:30%;opacity:.3}
+.radio-widget[data-state="playing"] .radio-eq i{opacity:1;animation:radioBar .8s ease-in-out infinite}
+.radio-eq i:nth-child(2){animation-delay:.15s}
+.radio-eq i:nth-child(3){animation-delay:.3s}
+.radio-eq i:nth-child(4){animation-delay:.45s}
+@keyframes radioBar{0%,100%{height:25%}50%{height:100%}}
+.radio-nav{background:none;border:none;color:rgba(var(--ra-c),.45);cursor:pointer;font-size:.85rem;
+  padding:0 .1rem;line-height:1;display:flex;align-items:center;transform:translateY(-1px)}
+.radio-nav:hover{color:rgb(var(--ra-c))}
+.radio-track{background:none;border:none;color:rgba(var(--ra-c),.45);cursor:pointer;padding:0;display:flex;align-items:center}
+.radio-track:hover{color:rgb(var(--ra-c))}
+.radio-widget[data-state="playing"] .radio-track,.radio-widget[data-state="resume"] .radio-track,
+.radio-widget[data-state="playing"] .radio-nav,.radio-widget[data-state="resume"] .radio-nav{color:rgb(var(--ra-c))}
+.radio-station{flex:1 1 auto;min-width:0;max-width:130px;padding:0 2px;overflow:hidden;white-space:nowrap;text-align:center;
+  display:flex;align-items:center;justify-content:center}
+.radio-marquee{display:inline-flex;font-family:var(--mono);font-size:.64rem;letter-spacing:.05em;line-height:1;
+  color:rgba(var(--ra-c),.45)}
+.radio-widget[data-state="playing"] .radio-marquee{color:rgb(var(--ra-c))}
+/* .scrolling добавляется js (radio.js), только когда текст реально не помещается — короткие тексты стоят на месте.
+   Вторая копия текста склеена встык (см. updateMarquee) -> translateX(-50%) даёт бесшовный луп без рывка в пустоту. */
+.radio-marquee.scrolling{animation-name:radioMarquee;animation-timing-function:linear;animation-iteration-count:infinite}
+@keyframes radioMarquee{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.radio-marquee.scrolling{animation:none}}
+/* accent-color на Windows/Chromium красит только декоративную "оболочку" нативного контрола —
+   сам жёлоб браузер всё равно рисует поверх своими цветами ("внешняя оболочка крашена, внутри нет").
+   appearance:none полностью отключает нативный вид — трек/ползунок рисуем сами, без полумер. */
+.radio-vol{width:34px;height:4px;-webkit-appearance:none;appearance:none;background:none;cursor:pointer;--vol-pct:70%}
+/* Левая часть трека до --vol-pct (двигает radio.js на init/input) — цвет состояния, правая —
+   фикс. серый, один и тот же в обоих состояниях (off/playing). */
+.radio-vol::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--ra-dim) var(--vol-pct),rgba(255,255,255,.25) var(--vol-pct))}
+.radio-vol::-moz-range-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--ra-dim) var(--vol-pct),rgba(255,255,255,.25) var(--vol-pct))}
+.radio-vol::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;border-radius:50%;background:var(--ra-dim);margin-top:-4px;cursor:pointer}
+.radio-vol::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--ra-dim);border:none;cursor:pointer}
+.radio-widget[data-state="playing"] .radio-vol::-webkit-slider-runnable-track,.radio-widget[data-state="resume"] .radio-vol::-webkit-slider-runnable-track{background:linear-gradient(to right,rgb(var(--ra-c)) var(--vol-pct),rgba(255,255,255,.25) var(--vol-pct))}
+.radio-widget[data-state="playing"] .radio-vol::-moz-range-track,.radio-widget[data-state="resume"] .radio-vol::-moz-range-track{background:linear-gradient(to right,rgb(var(--ra-c)) var(--vol-pct),rgba(255,255,255,.25) var(--vol-pct))}
+.radio-widget[data-state="playing"] .radio-vol::-webkit-slider-thumb,.radio-widget[data-state="resume"] .radio-vol::-webkit-slider-thumb{background:rgb(var(--ra-c))}
+.radio-widget[data-state="playing"] .radio-vol::-moz-range-thumb,.radio-widget[data-state="resume"] .radio-vol::-moz-range-thumb{background:rgb(var(--ra-c))}
+.radio-mute{background:none;border:none;color:rgba(var(--ra-c),.45);cursor:pointer;padding:0;display:flex;align-items:center}
+.radio-mute:hover{filter:drop-shadow(0 0 4px rgba(var(--ra-c),.7))}
+.radio-widget[data-state="playing"] .radio-mute,.radio-widget[data-state="resume"] .radio-mute{color:rgb(var(--ra-c))}
+.radio-mute .ico-vol-off{display:none}
+.radio-mute.muted .ico-vol-on{display:none}
+.radio-mute.muted .ico-vol-off{display:block}
+.radio-chill{display:none;align-items:center;justify-content:center;background:transparent;
+  border:1.5px solid transparent;width:21px;height:21px;border-radius:50%;
+  color:rgba(255,46,136,.45);cursor:pointer;padding:0;flex:0 0 auto}
+.radio-widget[data-state="playing"] .radio-chill{display:flex;color:rgb(var(--chill-c));border-color:rgb(var(--chill-c));
+  animation:chillPulse 1.8s ease-in-out infinite}
+.radio-chill:hover{box-shadow:0 0 14px rgba(var(--chill-c),.9)}
+@keyframes chillPulse{0%,100%{box-shadow:0 0 6px rgba(var(--chill-c),.6)}50%{box-shadow:0 0 12px rgba(var(--chill-c),.95)}}
+@media (prefers-reduced-motion:reduce){.radio-widget[data-state="playing"] .radio-chill{animation:none}}
+.radio-tip{position:absolute;bottom:130%;left:0;z-index:950;font-family:var(--mono);font-size:.465rem;
+  color:var(--sand);background:rgba(11,6,32,.95);border:1px solid var(--pink);border-radius:4.5px;
+  padding:.225rem .4125rem;white-space:nowrap;box-shadow:0 0 12px rgba(255,46,136,.4);
+  animation:radioTipFloat 2.2s ease-in-out infinite}
+@keyframes radioTipFloat{0%,100%{transform:translateY(0);opacity:1}50%{transform:translateY(-1.5px);opacity:.925}}
+@media (prefers-reduced-motion:reduce){.radio-tip{animation:none}}
+
+/* --- Зона нажатия на телефоне (31-08). Замер 375×812: .radio-track 11×11, .radio-nav 8×14,
+   .radio-mute 13×13 — попасть пальцем почти нельзя, а вид у полосы плеера намеренно компактный.
+   Поэтому растим не сами кнопки, а прозрачный ::after поверх: раскладка не двигается.
+   Значения не произвольные: горизонтальные зазоры между соседними кнопками в полосе — 12–13px,
+   поэтому ±6px по бокам смыкают зоны впритык и не дают им перекрыться (перекрытие означало бы
+   нажатие не на ту кнопку). По вертикали ±9px — полоса высотой 33px, выходить за неё некуда. */
+@media (max-width:900px){
+  .radio-track,.radio-toggle,.radio-nav,.radio-mute{position:relative}
+  .radio-track::after,.radio-toggle::after,.radio-nav::after,.radio-mute::after{
+    content:'';position:absolute;inset:-9px -6px}
+}

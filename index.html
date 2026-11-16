@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Абсолютный base — index.html теперь генерируется ещё и в ru|es|pt-br/ (scripts/build-locale-home.js);
+       без base относительные css/js/data/assets-пути внутри локализованных копий резолвились бы
+       от /ru/ и т.п., а не от корня. Фиксирует заодно и все fetch() внутри JS (MAP_DATA_BASE
+       и т.п.) — resolve относительных URL идёт от document base URI, не только у тегов разметки. -->
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title data-i18n="site.title">Leonida Interactive — GTA 6 Map, Wiki &amp; Guides</title>
+  <meta name="description" content="Interactive GTA 6 map of Leonida and 2100+ wiki pages in 11 languages: weapons, characters, locations, guides. GTA 6 is out on November 19, 2026." data-i18n-content="site.description">
+  <meta name="robots" content="max-image-preview:large">
+  <!-- Подтверждение прав в Яндекс Вебмастере (19-09). Метатег, а не HTML-файл: Cloudflare Pages
+       отвечает 308 на любой адрес с .html, и файл по точному URL не отдаёт 200. Не удалять —
+       Вебмастер перепроверяет права периодически. -->
+  <meta name="yandex-verification" content="356c889e4cf89805" />
+  <!-- hreflang взаимный (раунд-14 /ru/, раунд-19 +es/pt-br, 23-08 +fr/de, 06-09 +pl/it/tr, 19-09 +ja, 01-10 +ko) — все
+       версии объявляют друг друга и x-default; сам блок тегов не зависит от локали, поэтому НЕ через
+       data-i18n, идентичен во всех сгенерированных файлах. canonical — единственная строка, которая
+       различается между локалями (build-скрипт правит её). pt-BR — BCP47-регистр, как в wiki-src
+       (localeHreflang). Список обязан совпадать с HUB_LOCALES в wiki-src/src/i18n/config.ts:
+       локаль без своей главной сюда не дописывается — будет hreflang на 404. -->
+  <link rel="alternate" hreflang="en" href="https://leonidainteractive.com/">
+  <link rel="alternate" hreflang="ru" href="https://leonidainteractive.com/ru/">
+  <link rel="alternate" hreflang="es" href="https://leonidainteractive.com/es/">
+  <link rel="alternate" hreflang="pt-BR" href="https://leonidainteractive.com/pt-br/">
+  <link rel="alternate" hreflang="fr" href="https://leonidainteractive.com/fr/">
+  <link rel="alternate" hreflang="de" href="https://leonidainteractive.com/de/">
+  <link rel="alternate" hreflang="pl" href="https://leonidainteractive.com/pl/">
+  <link rel="alternate" hreflang="it" href="https://leonidainteractive.com/it/">
+  <link rel="alternate" hreflang="tr" href="https://leonidainteractive.com/tr/">
+  <link rel="alternate" hreflang="ja" href="https://leonidainteractive.com/ja/">
+  <link rel="alternate" hreflang="ko" href="https://leonidainteractive.com/ko/">
+  <link rel="alternate" hreflang="x-default" href="https://leonidainteractive.com/">
+  <link rel="canonical" href="https://leonidainteractive.com/" data-i18n-canonical="canonical">
+  <link rel="alternate" type="application/rss+xml" title="Leonida Interactive" href="/rss.xml">
+
+  <!-- OG/Twitter (23-08, деплой пульта на корень): без них шаринг главной в Discord/X давал голую
+       ссылку, а по бренд-запросу Google держал сниппет старой заглушки stub/index.html. Формулировки = title/
+       description выше; og:image — тот же дефолтный лендскейп-арт, что у вики (SeoHead.astro,
+       DEFAULT_OG_IMAGE), лежит в /img/ вики рядом с пультом на одном домене. og:url/og:title/
+       og:description локализуются build-locale-home.js через data-i18n-canonical/-content. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Leonida Interactive">
+  <meta property="og:url" content="https://leonidainteractive.com/" data-i18n-canonical="canonical">
+  <meta property="og:title" content="Leonida Interactive — GTA 6 Map, Wiki &amp; Guides" data-i18n-content="site.title">
+  <meta property="og:description" content="Interactive GTA 6 map of Leonida and 2100+ wiki pages in 11 languages: weapons, characters, locations, guides. GTA 6 is out on November 19, 2026." data-i18n-content="site.description">
+  <meta property="og:image" content="https://leonidainteractive.com/img/media/jason-and-lucia-01-with-logos-landscape-art.webp">
+  <meta name="twitter:card" content="summary_large_image"> <!-- twitter:title/description/image Twitter берёт из og:* -->
+
+  <!-- Аналитика (23-08, пульт выходит на корень): тот же набор, что у вики в SeoHead.astro —
+       Cloudflare Web Analytics (cookieless) + GA4 G-T1KCLJZ0PQ через Consent Mode v2 + баннер
+       /consent.js и /consent.css (общие файлы из wiki-src/public/, лежат в корне деплоя; словарь
+       баннера берёт язык из <html lang>). Только на боевом домене: локальный прогон и превью
+       статистику не шлют и баннером не мешают (у вики ту же роль играет import.meta.env.PROD).
+       Порядок обязателен: consent default раньше загрузки gtag.js. Блок одинаков во всех локалях. -->
+  <script>
+  (function () {
+    if (!/(^|\.)leonidainteractive\.com$/.test(location.hostname)) return;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    gtag('js', new Date());
+    gtag('config', 'G-T1KCLJZ0PQ');
+    var add = function (tag, attrs) { var el = document.createElement(tag); for (var k in attrs) el.setAttribute(k, attrs[k]); document.head.appendChild(el); };
+    add('script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-T1KCLJZ0PQ' });
+    add('script', { defer: '', src: 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token":"13ad59da5edf4bf8b53efbf6d307e0b1"}' });
+    add('link', { rel: 'stylesheet', href: '/consent.css' });
+    add('script', { defer: '', src: '/consent.js' });
+  })();
+  </script>
+
+  <!-- Брендовая разметка (SEO-раунд 05-08). Organization дублирует блок из
+       wiki-src/src/components/SeoHead.astro: пульт — отдельное приложение вне Astro, общего
+       импорта нет (тот же случай, что contactEmail/hreflang выше). WebSite — только тут: это
+       корень сайта, на подстраницах вики он был бы шумом. sameAs — только реально существующие
+       аккаунты, youtubeUrl/xUrl совпадают с SITE_CONFIG в data/config.js; Reddit там пока "#",
+       поэтому его здесь нет. Блок одинаков во всех локалях (ссылки языконезависимы), поэтому
+       без data-i18n — build-locale-home.js копирует его как есть. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://leonidainteractive.com/#organization",
+        "name": "Leonida Interactive",
+        "url": "https://leonidainteractive.com/",
+        "logo": "https://leonidainteractive.com/logo-512.png",
+        "sameAs": [
+          "https://www.youtube.com/@leonidainteract",
+          "https://www.instagram.com/leonidainteractive/",
+          "https://www.tiktok.com/@leonidainteractive",
+          "https://discord.gg/42dQMruxzx",
+          "https://x.com/LeonidaInteract"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://leonidainteractive.com/#website",
+        "name": "Leonida Interactive",
+        "alternateName": "Leonida Interactive Wiki",
+        "url": "https://leonidainteractive.com/",
+        "publisher": { "@id": "https://leonidainteractive.com/#organization" },
+        "inLanguage": "en"
+      }
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Yanone Kaffeesatz/Manrope — кириллические дублёры Bebas Neue/Space Grotesk (у тех нет
+       Cyrillic-глифов, RU-страница падала в системный шрифт) — тот же приём и тот же список,
+       что в вики (SeoHead.astro), там же обоснование замены Oswald -> Yanone по метрикам. -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&family=Yanone+Kaffeesatz:wght@700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <!-- Иконки — те же файлы, что у вики (wiki-src/public/, в деплое лежат в корне). Своих
+       <link rel="icon"> у пульта не было вовсе: браузер сам запрашивал /favicon.ico на 9.6 КБ.
+       Явный PNG 32×32 на 3.7 КБ дешевле и не зависит от догадки браузера. -->
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/favicon-180.png" sizes="180x180">
+  <link rel="stylesheet" href="css/style.css?v=c0fc02a7">
+  <link rel="stylesheet" href="css/radio.css?v=665ecc61">
+  <!-- Общие стили Relationship Map (режим RELATIONS): файл живёт в wiki-src/public/graph/,
+       в проде — корень деплоя; в dev путь проксируется на wiki dev-сервер (serve.ps1). -->
+  <link rel="stylesheet" href="/graph/relationship-graph.css">
+<meta name="google-adsense-account" content="ca-pub-4098626954341918">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4098626954341918" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- ===== TOP BAR ===== -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <a class="logo" href="#"><span class="logo-a">Leonida</span><span class="logo-b">Interactive</span><span class="logo-c">HUB</span></a>
+      <!-- Переключатель языка (раунд-15, 4 локали с раунда-19) — дропдаун как в вики
+           (LangSwitcher.astro, details/summary без JS): кнопка показывает ТЕКУЩИЙ язык, остальные
+           три — пункты меню. Локали — статичные файлы (index.html / ru|es|pt-br/index.html).
+           Содержимое .lang-menu на EN прописано руками (EN не генерируется, см. build-locale-home.js
+           комментарий вверху файла); на остальных локалях build-скрипт целиком переписывает
+           innerHTML этого div под нужную тройку (langMenuHtml()), т.к. набор ссылок отличается
+           по локали, а не только текст одной ссылки — под это не подходит точечный data-i18n-href. -->
+      <details class="lang-switch">
+        <summary aria-label="Language"><span data-i18n="langSwitch.current">EN</span> ▾</summary>
+        <div class="lang-menu">
+          <a href="/ru/">RU</a>
+          <a href="/es/">ES</a>
+          <a href="/pt-br/">PT-BR</a>
+          <a href="/fr/">FR</a>
+          <a href="/de/">DE</a>
+          <a href="/pl/">PL</a>
+          <a href="/it/">IT</a>
+          <a href="/tr/">TR</a>
+          <a href="/ja/">JA</a>
+          <a href="/ko/">KO</a>
+        </div>
+      </details>
+      <!-- 03-10 (владелец): радио на телефоне — круглая кнопка в шапке вместо полосы плеера на первом
+           экране. Тап включает Vice FM и показывает плеер, прилипший к низу экрана (полоса та же —
+           #radioWidget, класс body.radio-open); второй тап — выключает и прячет. Слой 2 (периферия).
+           На широком экране кнопки нет: там плеер стоит в левой колонке. Логика — скрипт в конце файла. -->
+      <button class="radio-fab" id="radioFab" type="button" data-state="off" title="Vice FM — click to play" data-i18n-title="radio.togglePlay" aria-label="Vice FM">
+        <svg class="rf-play" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>
+        <span class="rf-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+    </div>
+    <div class="topbar-center">
+      <a class="btn btn-discord" href="#discord" id="discordTop"><svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg><span data-i18n="nav.discord">Join Discord</span></a>
+      <button class="btn btn-primary" id="subBtn" disabled title="Sign in with Google" data-i18n-title="nav.signIn" data-i18n="nav.signIn">Sign in with Google</button>
+      <a class="btn btn-coffee" id="supportBtn" href="#" title="Buy us a coffee" data-i18n-title="nav.supportTitle"><span class="btn-emoji" aria-hidden="true">☕ </span><span data-i18n="nav.support">Support</span></a>
+    </div>
+    <div class="topbar-right">
+      <button class="ca-frame" id="caFrame" type="button" title="Copy contract address" aria-label="Live contract address leonidasoon. Click to copy.">
+        <span class="ca-live" aria-hidden="true"></span>
+        <span class="ca-kicker">Live</span>
+        <span class="ca-label">CA</span>
+        <span class="ca-value" id="caValue">leonidasoon</span>
+      </button>
+      <button class="fan-badge" id="legalBadge" data-i18n="nav.fanBadge">Independent fan-made</button>
+    </div>
+  </header>
+
+  <!-- ===== MAIN GRID ===== -->
+  <main class="deck">
+
+    <!-- LEFT COLUMN -->
+    <div class="col-left">
+      <div class="cd-widget">
+        <div class="sun-mini">
+          <div class="sun-mini-label" data-i18n="left.releaseLabel">GTA VI RELEASE</div>
+          <div class="countdown" id="cdRelease">
+            <div class="cd-cell"><span class="cd-num" data-u="d">—</span><span class="cd-unit">d</span></div>
+            <div class="cd-cell"><span class="cd-num" data-u="h">—</span><span class="cd-unit">h</span></div>
+            <div class="cd-cell"><span class="cd-num" data-u="m">—</span><span class="cd-unit">m</span></div>
+            <div class="cd-cell"><span class="cd-num" data-u="s">—</span><span class="cd-unit">s</span></div>
+          </div>
+        </div>
+        <div class="horizon-mini"></div>
+        <div class="cdw-trailer"><span id="t3Label" data-i18n="left.trailer3">Trailer 3</span> · <span id="cdTrailer">—</span></div>
+        <!-- 23-09 (владелец): клик по таймеру ведёт на страницу даты релиза в вики. Настоящая
+             ссылка, растянутая на весь виджет (::after в CSS), а не обработчик клика: её видят
+             краулеры и открывает средняя кнопка мыши. Адрес локализует build-locale-home.js. -->
+        <a class="cd-link" href="/wiki/release/release-date/" data-i18n-href="timer.href" title="GTA 6 release date" data-i18n-title="timer.linkTitle"></a>
+      </div>
+
+      <div class="radio-widget" id="radioWidget" data-state="off">
+        <button class="radio-track" id="radioTrackPrev" title="Previous track" data-i18n-title="radio.prevTrack">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><rect x="4" y="5" width="2" height="14"/><path d="M20 5L8 12l12 7z"/></svg>
+        </button>
+        <button class="radio-toggle" id="radioToggle" title="Vice FM — click to play" data-i18n-title="radio.togglePlay">
+          <span class="radio-ico">
+            <svg class="ico-play" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="9" width="18" height="10" rx="2"/>
+              <circle cx="8" cy="14" r="2"/>
+              <circle cx="16" cy="14" r="2"/>
+              <path d="M7 9l3-5h4l3 5"/>
+            </svg>
+            <svg class="ico-pause" viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16" rx="1"/>
+              <rect x="14" y="4" width="4" height="16" rx="1"/>
+            </svg>
+          </span>
+          <span class="radio-eq"><i></i><i></i><i></i><i></i></span>
+        </button>
+        <button class="radio-track" id="radioTrackNext" title="Next track" data-i18n-title="radio.nextTrack">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><rect x="18" y="5" width="2" height="14"/><path d="M4 5l12 7-12 7z"/></svg>
+        </button>
+        <button class="radio-nav" id="radioPrev" title="Previous station" data-i18n-title="radio.prevStation">‹</button>
+        <div class="radio-station"><div class="radio-marquee" id="radioMarquee"><span id="radioMarqueeText">VICE FM</span></div></div>
+        <button class="radio-nav" id="radioNext" title="Next station" data-i18n-title="radio.nextStation">›</button>
+        <button class="radio-mute" id="radioMute" title="Mute" data-i18n-title="radio.mute">
+          <svg class="ico-vol-on" viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8a5 5 0 010 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="ico-vol-off" viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+        </button>
+        <input class="radio-vol" id="radioVol" type="range" min="0" max="1" step="0.01" title="Volume" data-i18n-title="radio.volume">
+        <button class="radio-chill" id="radioChill" title="Chill mode — sunset countdown" data-i18n-title="radio.chill">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M3 14.5h18v2H3z"/>
+            <path d="M5 14a7 7 0 0114 0H5z"/>
+          </svg>
+        </button>
+        <span class="radio-tip" id="radioTip" hidden data-i18n="radio.tip">🎵 Turn on the radio</span>
+      </div>
+      <audio id="radioAudio" preload="auto"></audio>
+
+      <div class="votd" data-nosnippet>
+        <div class="votd-head">
+          <span data-i18n="left.videoOfDay">VIDEO OF THE DAY</span>
+          <span class="votd-actions">
+            <button class="votd-refresh" id="votdRefresh" title="Next video" data-i18n-title="left.nextVideo">↻</button>
+            <button class="feed-expand" id="votdExpand" title="Open full feed" data-i18n-title="common.openFullFeed">⤢</button>
+          </span>
+        </div>
+        <button class="votd-thumb" id="votdThumb" type="button">
+          <img id="votdThumbImg" src="" alt="">
+          <div class="votd-play"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6.5 5v14l11-7z"/></svg></div>
+        </button>
+        <div class="votd-title" id="votdTitle"></div>
+      </div>
+
+      <div class="official-card">
+        <div class="official-head">
+          <span data-i18n="left.official">OFFICIAL</span>
+          <button class="feed-expand" id="officialExpand" title="Open full feed" data-i18n-title="common.openFullFeed">⤢</button>
+        </div>
+        <div class="pip-video" id="officialPip"><span class="ph-note" data-i18n="left.trailerLoop">TRAILER LOOP</span></div>
+        <div class="official-shots" id="officialShots"></div>
+      </div>
+    </div>
+
+    <!-- MAP FRAME -->
+    <div class="map-frame">
+      <!-- Переключатель центральной зоны NEWS | ARTICLES | MAP | RELATIONS | GAMES (PROMPT_home_articles_mode_03-09 §1,
+           js/view-mode.js). Стоит над полотном карты по центру — НЕ в общей шапке (там
+           Discord/Subscribe/☕). hidden до инициализации: view-mode.js показывает его, только
+           когда карта включена и данные карточек загрузились. -->
+      <div class="view-switch" id="viewSwitch" hidden>
+        <!-- Порядок кнопок = порядок режимов (view-mode.js читает его отсюда): NEWS · ARTICLES ·
+             MAP · RELATIONS · GAMES (владелец 24-09; GAMES — 11-10). -->
+        <button class="vs-btn" id="viewBtnNews" type="button" data-view="news" data-i18n="view.news">NEWS</button>
+        <button class="vs-btn" id="viewBtnArticles" type="button" data-view="articles" data-i18n="view.articles">ARTICLES</button>
+        <button class="vs-btn active" id="viewBtnMap" type="button" data-view="map" data-i18n="view.map">MAP</button>
+        <button class="vs-btn" id="viewBtnRelations" type="button" data-view="relations" data-i18n="view.relations">RELATIONS</button>
+        <button class="vs-btn" id="viewBtnGames" type="button" data-view="games" data-i18n="view.games">GAMES</button>
+      </div>
+      <!-- Режим кадра — до первой отрисовки (баг 01-10: на телефоне 1–2 с была видна карта с открытым
+           меню, пока внизу страницы грузились Leaflet и остальные скрипты, и только потом view-mode.js
+           переключал на NEWS). Выбор тот же, что в view-mode.js: hash → сохранённый → дефолт. Дефолт
+           здесь записан словом, потому что SITE_CONFIG ещё не загружен; разойдутся — view-mode.js всё
+           равно поставит верный класс, отличаться будет только первый кадр. -->
+      <script>
+      (function (f) {
+        var ok = /^(news|articles|map|relations|games)$/;
+        var m = (location.hash.match(/^#view=([a-z]+)/) || [])[1];
+        if (!m) { try { m = localStorage.getItem('leonida.home.view'); } catch (e) {} }
+        if (!ok.test(m || '')) m = 'news';
+        if (m !== 'map') f.classList.add('view-' + m);
+        // Подсветка вкладки — тоже сразу, иначе первый кадр показывал NEWS-плитку под активной MAP.
+        var bs = f.querySelectorAll('.vs-btn');
+        for (var k = 0; k < bs.length; k++) bs[k].classList.toggle('active', bs[k].getAttribute('data-view') === m);
+      })(document.currentScript.parentNode);
+      </script>
+      <!-- Режим ARTICLES: featured-карточка + сетка, рендерит js/view-mode.js из
+           window.FEATURED_ARTICLES (data/featured-articles.<locale>.js, генерируется на сборке).
+           Карта при переключении не уничтожается — скрывается CSS-ом (.map-frame.view-*). -->
+      <div class="articles-view" id="articlesView" hidden></div>
+      <!-- Режим NEWS (23-09): посты /news/ той же плиткой, что ARTICLES (Render.featurePlate),
+           из window.FEATURED_NEWS — тот же файл data/featured-articles.<locale>.js. -->
+      <div class="articles-view" id="newsView" hidden></div>
+      <!-- Режим RELATIONS: граф связей персонажей. Внутренности строит общее ядро
+           /graph/relationship-graph-core.js (то же, что на /wiki/characters/relationship-map/ —
+           вики остаётся SEO-объяснением) из window.RELATIONSHIP_GRAPH; инициализация ленивая,
+           при первом входе в режим (js/view-mode.js). -->
+      <div class="graph-view" id="graphView" hidden></div>
+      <!-- Режим GAMES (11-10): пятнашки. Слой 2 (CORE_SPEC): режим центральной зоны, не окно и не
+           оверлей. Внутренности строит js/puzzle.js через Render.puzzle* из window.PUZZLE_PICS
+           (data/puzzle-pics.js); init ленивый, при первом входе в режим (js/view-mode.js). -->
+      <div class="games-view" id="gamesView" hidden></div>
+      <div id="leafletMap"></div>
+      <button class="map-fs" id="fsBtn" title="Fullscreen map" data-i18n-title="map.fullscreen">⛶</button>
+      <!-- Время суток видно всегда, не только в панели: тумблер персистится, и карта молча
+           открывалась ночью после прошлого визита (24-08). Текст переключает js/night-mode.js —
+           показывает одну из двух подписей, ключи те же, что у тумблера. -->
+      <span class="map-daynight" title="Time of day" data-i18n-title="map.timeOfDay">
+        <span id="dnTagDay" data-i18n="map.day">Day</span>
+        <span id="dnTagNight" data-i18n="map.night" hidden>Night</span>
+      </span>
+
+      <!-- Шторка-слайдер AI-слоя (PROMPT_map_ai_realistic_layer_v2.md §6-7) — скрыта, пока слой
+           не включён. Обязательный бэйдж-раскрытие §7 переехал вниз-влево, к кредитам. -->
+      <div class="ai-compare-handle" id="aiCompareHandle" hidden></div>
+
+      <!-- Приборная панель режима езды — один бокс на три прибора, слева направо: WANTED,
+           спидометр, радар (порядок по запросу — «поменяем местами радар и спидометр, а потом
+           WANTED и радар»). Показывает/прячет её целиком js/drive-mode.js; радар внутри
+           гасит себя сам (js/radar.js), если выключен в конфиге. Плашка прогресса тумана переехала
+           отсюда в .map-panel — она статистика, а не прибор. -->
+      <div class="drive-hud" id="driveHud" hidden>
+      <!-- WANTED (js/police.js) — сколько копов сейчас в погоне. Слово плюс обычные пятиконечные
+           ★ (юникод, шрифт пульта): никакой фирменной графики, никаких шестиконечных звёзд.
+           Не переводится, как DRIVE/STOP/RESET — HUD-термины режима езды оставлены английскими.
+           Полоска ударов до ареста жила тут же и уехала на машинку (js/police.js renderHp):
+           в углу экрана её не читали. -->
+      <!-- Колонка WANTED: над плашкой — счётчик заработанного за заезд. Он тут не для красоты:
+           копы забирают РОВНО эту сумму — по куску за каждый удар и остаток на аресте
+           (js/police.js), и до счётчика игрок видел только красный тост, а не сумму, которой
+           рискует. Мелким рядом — общий баланс, чтобы «минус 12» читалось на фоне «всего 124».
+           Пишет js/drive-mode.js.
+           Подпись менялась четырежды: RUN читался как «бег/поездка», HAUL («добыча») оказался просто
+           незнакомым словом, AT RISK — «плохо», BONUS RESPECT в два слова растянуло колонку и
+           оптически ужало спидометр рядом. Итог — BONUS RP (16-08(4)): смысл тот же (надбавка,
+           набранная за заезд), длина как у WANTED. Что её можно потерять, объясняют красная вспышка
+           при ударе и сама погоня.
+           Общий баланс мелкой цифрой рядом (16-08: «142») убран там же: с 16-08(3) он стоит первой
+           секцией панели Map Info, и вторая копия только отъедала ширину у приборов.
+           Фиксируется этот счётчик НЕ здесь: кнопку из приборки (16-08(4), первый заход) заменили
+           сейф-хаусы на карте — «может сделаем в стиле ГТА, save house». Клик по счётчику был
+           действием без места, дом — место без клика; см. js/drive-mode.js updateHouses. -->
+      <div class="drive-wanted-col">
+        <div class="drive-respect">BONUS RP <b id="driveRespectRun">+0</b></div>
+        <div class="drive-wanted" id="driveWanted" hidden>
+          <span class="dw-label">WANTED</span><span class="dw-stars" id="driveWantedStars"></span>
+        </div>
+      </div>
+      <!-- Радиальный полукруг: длина дуги r=42 = PI*42 ~ 131.9, заполнение — stroke-dashoffset -->
+      <div class="drive-speedo" id="driveSpeedo">
+        <svg class="ds-gauge" viewBox="0 0 100 56">
+          <defs>
+            <!-- Смещено к розовому (раунд-14 "побольше розового"): переход сжат в первые 40%
+                 дуги, держит чистый розовый до 85%, последние 15% дуги — красная зона "редлайна". -->
+            <linearGradient id="dsGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#ff9e4f"/><stop offset=".4" stop-color="#ff2e88"/><stop offset=".85" stop-color="#ff2e88"/><stop offset="1" stop-color="#ff2e2e"/>
+            </linearGradient>
+            <!-- Ночная тема (фиолетово-розовый + красная зона в последних 15%, симметрично
+                 обычной шкале) — переключается CSS, не JS: id всегда в DOM, .night-ui .ds-arc-fill
+                 меняет stroke на url(#dsGradNight). Раньше эта тема висела на Realistic-слое. -->
+            <linearGradient id="dsGradNight" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#7d5fff"/><stop offset=".85" stop-color="#ff5fc0"/><stop offset="1" stop-color="#ff2e2e"/>
+            </linearGradient>
+          </defs>
+          <path class="ds-arc-bg" d="M8,50 A42,42 0 0 1 92,50"/>
+          <!-- Риски шкалы (раунд-11, ретро-стилистика): 11 делений по полукругу r33..38,
+               major на 0/100/200 (k=0/5/10). Координаты предвычислены: (50 - r*cos a, 50 - r*sin a) -->
+          <g class="ds-ticks">
+            <line class="major" x1="17" y1="50" x2="12" y2="50"/>
+            <line x1="18.6" y1="39.8" x2="13.9" y2="38.3"/>
+            <line x1="23.3" y1="30.6" x2="19.3" y2="27.7"/>
+            <line x1="30.6" y1="23.3" x2="27.7" y2="19.3"/>
+            <line x1="39.8" y1="18.6" x2="38.3" y2="13.9"/>
+            <line class="major" x1="50" y1="17" x2="50" y2="12"/>
+            <line x1="60.2" y1="18.6" x2="61.7" y2="13.9"/>
+            <line x1="69.4" y1="23.3" x2="72.3" y2="19.3"/>
+            <line x1="76.7" y1="30.6" x2="80.7" y2="27.7"/>
+            <line x1="81.4" y1="39.8" x2="86.1" y2="38.3"/>
+            <line class="major" x1="83" y1="50" x2="88" y2="50"/>
+          </g>
+          <path class="ds-arc-fill" id="driveSpeedoFill" d="M8,50 A42,42 0 0 1 92,50"/>
+          <!-- Стрелка — сегмент внешнего обода (r 24..38), не луч из центра: центр полукруга
+               свободен, цифра км/ч больше не перекрывается (раунд-10). Вращение вокруг (50,50)
+               ставит drive-mode.js, 0 км/ч = горизонт слева. -->
+          <line class="ds-needle" id="driveSpeedoNeedle" x1="12" y1="50" x2="26" y2="50"/>
+        </svg>
+        <div class="ds-readout"><span class="ds-value" id="driveSpeedoValue">0</span><span class="ds-unit">km/h</span></div>
+      </div>
+      <!-- Радар-сонар (js/radar.js) — крайний справа. Развертка крутится всегда, пинг-кольца
+           добавляет JS по частоте до ближайшей цели. Отвечает только на «близко ли что-то ценное»;
+           единственное направление — точка-пеленг на кромке на ПОСЛЕДНЕМ куске сета (.rd-bearing,
+           создаётся из JS, как и пинг-кольца). -->
+      <div class="drive-radar" id="driveRadar" hidden title="0 targets in range">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <circle class="rd-ring" cx="20" cy="20" r="17"/>
+          <circle class="rd-ring" cx="20" cy="20" r="10"/>
+          <path class="rd-sweep" d="M20 20 L20 3 A17 17 0 0 1 32.5 8.4 Z"/>
+          <circle class="rd-core" cx="20" cy="20" r="2"/>
+        </svg>
+      </div>
+      <!-- RESET — спасательный круг: показывается drive-mode.js только когда машина застряла
+           в воде дольше пары секунд; клик телепортирует на ближайшую дорогу (snapToRoad).
+           Без перевода, как DRIVE/STOP. -->
+      <button class="drive-reset" id="driveResetBtn" type="button" hidden>RESET</button>
+      </div>
+      <!-- Мигающая подсказка на весь кадр при старте езды — гасит первый газ (js/drive-mode.js).
+           Вторая строка объясняет радар: без неё игрок видит новый прибор и не знает, на что он
+           реагирует (правило «фичу надо угадать» — не фича). -->
+      <div class="drive-start-hint" id="driveStartHint" hidden>
+        <span data-i18n="map.pressW">HOLD W TO DRIVE</span>
+        <small id="driveRadarHint" data-i18n="map.radarHint">Sonar hears legendary cards</small>
+        <small id="driveSafehouseHint" data-i18n="map.safehouseHint">Reach a safehouse before exit — or lose 5 RP</small>
+      </div>
+
+      <!-- Что меняется ночью (16-08(4) «по ночи надо конкретно сообщать — что ночью меняются
+           условия, может табличку выводить»). Ночь была чисто визуальным переключателем на вид, а
+           на деле меняет и правила: у копов сжимается радиус агро. Показывается на 7 секунд, когда
+           игрок САМ включил ночь (js/night-mode.js) — не при загрузке страницы с персистнутой
+           ночью, иначе табличка встречала бы на каждом заходе. Клик закрывает раньше.
+           Три строки — ровно то, что реально отличается; четвёртой не выдумывать. -->
+      <div class="night-brief" id="nightBrief" hidden>
+        <div class="nb-head" data-i18n="map.nightHead">NIGHT CHANGES THE RULES</div>
+        <table class="nb-table">
+          <tr><th data-i18n="map.nightCops">Police</th><td data-i18n="map.nightCopsVal">spot you later — aggro radius −40%</td></tr>
+          <tr><th data-i18n="map.nightLights">Headlights</th><td data-i18n="map.nightLightsVal">a light cone in front of the car</td></tr>
+          <tr><th data-i18n="map.nightCity">City</th><td data-i18n="map.nightCityVal">neon glow — night city vibe</td></tr>
+        </table>
+      </div>
+
+      <aside class="map-panel">
+        <!-- Legend уехал из шапки в левый нижний угол, к кредитам (16-08(4)) — см.
+             .map-credits-stack ниже. В шапке остались стрелка и заголовок. -->
+        <div class="panel-head">
+          <!-- Стрелка уводит панель ВБОК за правый край кадра, оставляя торчать саму стрелку
+               (js/map.js + .map-panel.collapsed). Свернуть «наверх» до одной шапки было хуже:
+               шапка всё равно висела над картой, а из-под неё не было видно, что там дальше. -->
+          <button class="panel-collapse" id="panelCollapse" type="button" title="Collapse panel" data-i18n-title="map.collapse">▸</button>
+          <h3 data-i18n="map.info">Map Info</h3>
+        </div>
+        <!-- Режимы панели (16-08(9) «правая панель Map Info выглядит уже перегруженной. Надо
+             подумать, как сделать режимы Explore / Drive / Compare»). Пять секций подряд читались
+             как один длинный список: игрок листал слои, чтобы добраться до коллекции. Теперь
+             одновременно видна одна группа, а YOUR RESPECT остаётся всегда — это статус, а не
+             раздел. Переключение — классом .pm-off, а не атрибутом hidden: hidden уже занят
+             собственными kill switch'ами секций (COMPARE_MAPS.enabled), и два механизма на одном
+             атрибуте передрались бы. Подписи английские, как DRIVE/STOP/RESET. -->
+        <div class="panel-modes" id="panelModes">
+          <button class="map-ui-btn pm-btn active" type="button" data-mode="explore">EXPLORE</button>
+          <button class="map-ui-btn pm-btn" type="button" data-mode="drive">DRIVE</button>
+          <button class="map-ui-btn pm-btn" type="button" data-mode="compare">COMPARE</button>
+        </div>
+        <!-- Каждая функция — своя секция-панелька в общей рамке (раунд 08-09(3): «одно большое окно
+             Map Info хочется разделить — слои, езду и коллекционирование, каждый раздел своей
+             панелькой»). Раньше секции разделяли линии .panel-divider — граница читалась слабее
+             самих контролов, и всё сливалось в один список. Разделение чисто визуальное: панель
+             остаётся ОДНИМ <aside>, иначе своя логика сворачивания, ночная тема и расчёт ширины
+             в applyHeroLOD (hero-tiles.js) размножились бы на три копии. -->
+        <!-- Свой счётчик Respect в панели карты (16-08): в фуллскрине кадр закрывает верхний бар
+             пульта вместе с общим счётчиком, и во время заезда игрок не видел, сколько у него
+             всего. Второго источника правды тут нет — цифру пишет тот же render() из js/respect.js
+             по [data-respect-num], как и бейджу в баре. Стоит ПЕРВОЙ секцией (16-08(3) «саму
+             плашку наверх»): это единственная строка панели, которая меняется по ходу заезда,
+             внизу под коллекцией её приходилось искать. -->
+        <section class="panel-sect" data-sect="respect">
+        <div class="panel-caption" data-i18n="map.yourRespect">Your respect</div>
+        <div class="panel-respect"><b data-respect-num>0</b> <span>RP</span></div>
+        <!-- Строки дневного потолка тут больше нет: кап удалён в 16-08(15), см. js/respect.js -->
+        </section>
+        <section class="panel-sect" data-sect="layer" data-mode="explore">
+        <div class="panel-caption" data-i18n="map.layer">Map layer</div>
+        <!-- AI-слой (PROMPT_map_ai_realistic_layer_v2.md §6) — два состояния Original/Realistic
+             (сегмент-переключатель); шторка-слайдер поверх карты остаётся для частичного
+             сравнения. Логика в js/ai-compare.js, не общий openUiPanel(). -->
+        <div class="ai-seg" id="aiSeg">
+          <button class="map-ui-btn ai-seg-btn active" id="aiSegOriginal" type="button" data-i18n="map.original">Original</button>
+          <button class="map-ui-btn ai-seg-btn" id="aiSegRealistic" type="button" data-i18n="map.realistic">Realistic</button>
+        </div>
+        <!-- Показ фото-карточек на карте (раунд-11) — прячет слой целиком (js/hero-tiles.js) -->
+        <label class="fog-row" id="showCardsRow" style="position:relative"><!-- контракт Respect.popup: пузырь «Photo cards hidden» -->
+          <input type="checkbox" id="showCardsToggle" checked> <span data-i18n="map.showCards">Show cards</span>
+        </label>
+        </section>
+        <!-- Сравнение с прошлыми частями (16-08(8), js/map-compare.js). Слой 1 (карта) + слой 2
+             (панель): кнопка кладёт контур прошлой карты поверх полотна Leonida в одном масштабе.
+             Кнопки и цифры рисует скрипт из SITE_CONFIG.COMPARE_MAPS — второго списка игр в
+             разметке нет. Секция скрыта, пока скрипт не убедится, что фича включена. -->
+        <section class="panel-sect" id="compareSect" data-sect="compare" data-mode="compare" hidden>
+        <div class="panel-caption" data-i18n="map.compare">Compare maps</div>
+        <div class="map-ui-btns cmp-btns" id="compareBtns"></div>
+        <!-- Общий ползунок прозрачности на все включённые карты (16-08(10) «может сделаешь слайдер
+             прозрачности?»). Один на всех, а не по одному на карту: крутят его ровно затем, чтобы
+             разглядеть, что под наложением, — и держать при этом две разные альфы незачем. -->
+        <label class="cmp-alpha">
+          <span data-i18n="map.opacity">Opacity</span>
+          <input type="range" id="compareAlpha" min="15" max="100" step="5" value="70">
+        </label>
+        </section>
+        <section class="panel-sect" data-sect="drive" data-mode="drive">
+        <div class="panel-caption" data-i18n="map.drive">Drive</div>
+        <div class="map-ui-btns">
+          <!-- Режим езды (PROMPT_map_drive_mode_step1.md §1) — тоже не data-panel, своя логика в
+               js/drive-mode.js. Скрыта по умолчанию, показывается по DRIVE_MODE.enabled/тач/слою.
+               Галочка «Fog of war» рядом убрана 16-08(11) («мб fog of war вообще убрать галочку
+               тогда? если у нас чисто режим для езды»): туман — это сама механика разведки, а
+               выключатель механики — не настройка, а чит. Заодно ушёл скачок вёрстки: строка
+               появлялась по START ENGINE и сдвигала COLLECTION на 27px вниз. -->
+          <button class="map-ui-btn" id="driveModeBtn" type="button" hidden>DRIVE</button>
+        </div>
+        <!-- Время суток — затемнение + emissive-свечение городов, js/night-mode.js. Скрыт по
+             умолчанию, показывается по NIGHT_MODE.enabled; дефолт — день (не отмечен).
+             Тумблер, а не шкала: сначала была плавная (читалась как «просто странное затемнение»),
+             потом три ступени — промежуточные сумерки владельцу тоже не нужны. Состояний ровно два,
+             и переключатель честно это показывает. Слева день (солнце), справа ночь (луна).
+             Живёт в DRIVE, а не в слоях (16-08(10)): ночь — это фары, невидимость от копов и
+             ночной город, то есть параметр поездки, а не вариант отрисовки карты. -->
+        <div class="fog-row daynight-row" id="nightRow" hidden>
+          <span class="dn-side">
+            <svg class="dn-ico dn-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 1.6v3.1M12 19.3v3.1M1.6 12h3.1M19.3 12h3.1M4.6 4.6l2.2 2.2M17.2 17.2l2.2 2.2M19.4 4.6l-2.2 2.2M6.8 17.2l-2.2 2.2"/></svg>
+            <span data-i18n="map.day">Day</span>
+          </span>
+          <input type="checkbox" id="nightToggle" class="daynight-switch"
+                 title="Time of day" data-i18n-title="map.timeOfDay">
+          <span class="dn-side">
+            <span data-i18n="map.night">Night</span>
+            <svg class="dn-ico dn-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.8A8.6 8.6 0 0 1 9.2 3.8 8.6 8.6 0 1 0 20.2 14.8z"/></svg>
+          </span>
+        </div>
+        </section>
+        <!-- Коллекция видна и в EXPLORE, и в DRIVE (16-08(10)): карточки собираются как раз за рулём,
+             и счётчик Cards N/88 в этот момент — самый живой показатель панели. Несколько режимов в
+             одном data-mode — список через пробел, см. map.js. -->
+        <section class="panel-sect" data-sect="collection" data-mode="explore drive">
+        <div class="panel-caption" data-i18n="map.collection">Collection</div>
+        <!-- Прогресс карточек вернулся в панель («полоску маркеров спрятал бы, а полоски карточек
+             вернул бы»): общая полоса Cards N/88 + четыре тонкие по редкости. Полоса меток (369
+             точек) убрана совсем — это фон исследования, а не коллекция; счётчик тумана остаётся
+             только в окне COLLECTION. Счётчика на кнопке ниже нет намеренно: Cards N/M стоит над
+             своей полосой, второй раз то же число на кнопке — шум. -->
+        <!-- id — строка стала вторым входом в COLLECTION (клик, windows.js): при нуле открытых
+             ведёт сразу на HOW TO PLAY — пустой счётчик сам по себе ничего новичку не объясняет. -->
+        <div class="hero-explored" id="heroExploredRow" title="Open collection" data-i18n-title="map.openCollection">
+          <span data-i18n="map.cards">Cards</span> <span id="heroExploredCount">0</span> / <span id="heroExploredTotal">0</span>
+          <div class="hero-explored-bar"><div class="hero-explored-bar-fill" id="heroExploredBarFill"></div></div>
+          <div class="tier-bars" id="heroTierBars"></div>
+        </div>
+        <button class="panel-collect" id="cardsCollectionBtn" type="button">
+          <span data-i18n="map.openCollection">Open collection</span>
+          <span class="hero-explored-expand">⤢</span>
+        </button>
+        </section>
+        <!-- Подписи «Community reconstruction» в панели нет (08-09(4) «текст убираем или переносим
+             в правый нижний угол»): та же строка уже стоит в блоке атрибуции слева внизу
+             (.map-attribution-note) — она там обязательная, и второй копии в пульте не нужно. -->
+      </aside>
+
+      <!-- Legend/Credits/Sources (§5.4) — один оверлей, контент подставляется map.js -->
+      <div class="map-ui-panel" id="mapUiPanel">
+        <div class="map-ui-panel-head">
+          <span id="mapUiPanelTitle"></span>
+          <button class="map-ui-panel-close" id="mapUiPanelClose" title="Close" data-i18n-title="common.close">✕</button>
+        </div>
+        <div class="map-ui-panel-body"><img id="mapUiPanelImg" alt=""><img id="mapUiPanelImg2" alt="" hidden><p class="map-ui-panel-note" id="mapUiPanelNote"></p></div>
+      </div>
+
+      <!-- Левый нижний столбец служебных подписей: обязательное раскрытие AI-слоя (§7 промпта,
+           скрыто пока слой выключен) над атрибуцией тайлов. Атрибуция сокращена (раунд-10), все 3
+           обязательных элемента сохранены: кредит YANIS/сообществу, gtadb CC BY 4.0, "не хостим
+           ликнутое"; полный дословный текст — на /wiki/methodology (Full credits). -->
+      <div class="map-credits-stack">
+        <!-- Legend (16-08(4) «кнопку legend сместим в левый нижний угол к credits»): та же
+             .map-ui-btn[data-panel] — обработчик в map.js общий, изменилось только место и CSS.
+             Логически она и так была служебной подписью карты, а не контролом пульта: легенда
+             объясняет ЭТУ карту, ровно как строчка кредитов под ней. Сама панель легенды больше
+             не растягивается на всю высоту кадра (см. .map-ui-panel), иначе она накрывала бы и
+             кнопку, и обязательную атрибуцию. -->
+        <button class="map-ui-btn" data-panel="legend" data-i18n="map.legend">Legend</button>
+        <div class="ai-compare-badge" id="aiCompareBadge" hidden></div>
+        <div class="map-attribution" data-i18n-html="map.attribution">Map: YANIS v13 &middot; community project &middot; <a href="https://map.gtadb.org" target="_blank" rel="noopener noreferrer">gtadb.org</a> (CC BY 4.0) &middot; no leaked assets &middot; <a href="/wiki/methodology/">Full credits</a>
+          <div class="map-attribution-note" data-i18n="map.communityNote">Community reconstruction — not official coordinates</div>
+        </div>
+      </div>
+
+      <!-- Карточка photo-tile (T1, PROMPT_map_hero_tiles.md §5) — самостоятельный компонент, не
+           L.popup и не общий #lightbox (тот привязан к window.SCREENSHOTS/NewsReactions). -->
+      <div class="hero-card-overlay" id="heroCardOverlay" hidden>
+        <div class="hero-card">
+          <button class="hero-card-close" id="heroCardClose" title="Close" data-i18n-title="common.close">✕</button>
+          <img id="heroCardImg" alt="">
+          <div class="hero-card-body">
+            <!-- Бейдж редкости: текст/цвет ставит hero-tiles.js из SITE_CONFIG.CARD_TIERS.
+                 Без data-i18n, но переведён: слово приходит из JS через Render.t(), а билд-скрипт
+                 подменяет только статичную разметку.
+                 Стоит ПЕРЕД заголовком: float:right работает только с тем, что идёт следом. -->
+            <span class="hero-card-tier" id="heroCardTier" hidden></span>
+            <h4 id="heroCardTitle"></h4>
+            <div class="hero-card-location" id="heroCardLocation"></div>
+            <div class="hero-card-attr" id="heroCardAttr"></div>
+            <!-- «Уже в коллекции» на повторном открытии (14-08). Текст ставит hero-tiles.js через
+                 Render.t() — как и бейдж редкости, поэтому data-i18n тут не нужен. -->
+            <div class="hero-card-owned" id="heroCardOwned" hidden></div>
+            <a class="hero-card-readmore" id="heroCardReadmore" href="#" hidden data-i18n="map.readMore">Read more →</a>
+            <div class="hero-card-progress"><span data-i18n="map.cards">Cards</span> <span id="heroCardProgressCount">0</span> / <span id="heroCardProgressTotal">0</span></div>
+            <div class="hero-explored-bar" id="heroCardProgressBar"><div class="hero-explored-bar-fill" id="heroCardProgressFill"></div></div>
+            <!-- Прогресс по редкости ЭТОЙ карточки (14-08): общая полоса выше отвечает «сколько
+                 всего собрано», эта — «сколько собрано таких же». Классы трека общие с полосами
+                 редкости в панели Map Info (.tier-bar-*), цвет и название ставит hero-tiles.js
+                 из SITE_CONFIG.CARD_TIERS — своих переводимых строк тут нет. -->
+            <div class="hero-card-tier-row" id="heroCardTierRow" hidden>
+              <span class="tier-bar-name" id="heroCardTierName"></span>
+              <span class="tier-bar-track" id="heroCardTierTrack"><i id="heroCardTierFill"></i></span>
+              <span class="tier-bar-num" id="heroCardTierNum"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-right">
+      <div class="community-card">
+        <div class="cc-main">
+          <div class="cc-respect" title="Earn Respect for actions" data-i18n-title="community.respectTitle">
+            <div class="ccr-label-row">
+              <div class="ccr-label" data-i18n="community.yourRespect">YOUR RESPECT</div>
+              <button class="guide-btn" id="guideBtn" title="How this site works" data-i18n-title="community.guideTitle">?</button>
+            </div>
+            <div class="ccr-num" id="respectNum">0</div>
+            <div class="ccr-level-bar"><div class="ccr-level-fill" id="respectLevelFill"></div></div>
+            <div class="ccr-level-label" id="respectLevelLabel">LEVEL 1</div>
+            <!-- Своё звание с подписью (заполняет respect.js): «CURRENT RANK · DRIFTER».
+                 Раньше тут стояла цель «→ КУРЬЕР · 40 RP» — единственное имя ранга на экране было
+                 чужим и читалось как своё (16-08(8)). -->
+            <div class="ccr-rank" id="respectRank" hidden></div>
+            <div class="ccr-login-note" data-i18n="community.loginNote">🔒 Log in to save your progress</div>
+          </div>
+          <div class="cc-online"><span class="cc-dot"></span><span id="onlineNum">—</span> <span class="cc-online-long" data-i18n="community.onlineNow">online now</span><span class="cc-online-short" data-i18n="community.onlineShort">online</span></div>
+        </div>
+        <!-- Лидерборд (раунд-13 заглушка, раунд-14 слит в COMMUNITY, раунд-20 — окно вместо
+             инлайн-раскрывашки: CORE_SPEC "не писать оверлей с нуля", клик открывает окно через
+             openWindow (js/windows.js), вкладки TOP RESPECT/RANKS — см. js/leaderboard.js). -->
+        <div class="cc-board">
+          <button class="cc-lb-toggle" id="ccLbToggle" type="button" title="Open the Respect leaderboard" data-i18n-title="community.openLeaderboard">
+            <span data-i18n="community.topPlayers">Top Respect</span><span class="cc-lb-more" data-i18n="community.more">More</span><span class="cc-lb-toggle-arrow">⤢</span>
+          </button>
+        </div>
+      </div>
+      <nav class="wiki-panel">
+        <a class="wiki-head" href="/wiki/" data-i18n-href="wikiHead.href">LEONIDA WIKI</a>
+        <div id="wikiLinks">
+    <a class="wiki-tile" href="/wiki/characters/">
+      <img class="wt-img" src="/img/media/real-dimez-04-press.webp" alt="" loading="lazy">
+      <span class="wt-scrim"></span>
+      <span class="wt-label">CHARACTERS</span>
+    </a>
+    <a class="wiki-tile" href="/wiki/vehicles/">
+      <img class="wt-img" src="/img/media/vintage-vice-city-pack-vapid-stanier-01-edition80.webp" alt="" loading="lazy">
+      <span class="wt-scrim"></span>
+      <span class="wt-label">VEHICLES</span>
+    </a>
+    <a class="wiki-tile" href="/wiki/locations/">
+      <img class="wt-img" src="/img/media/trailer-1-01-press.webp" alt="" loading="lazy">
+      <span class="wt-scrim"></span>
+      <span class="wt-label">LOCATIONS</span>
+    </a>
+    <a class="wiki-tile" href="/wiki/cheats/">
+      <img class="wt-img" src="/img/media/trailer-2-39-press.webp" alt="" loading="lazy">
+      <span class="wt-scrim"></span>
+      <span class="wt-label">CHEATS</span>
+    </a></div>
+      </nav>
+      <div class="billboard" id="billboard"></div>
+    </div>
+
+    <!-- DOCK (01-10): ячейка под левой колонкой. На широком экране LIVE WIRE и WEAZEL — две вкладки
+         (заголовки ячеек, переключает windows.js через [data-tab]); на телефоне — плитки 2×2 вместе
+         с VIDEO OF THE DAY и OFFICIAL. STREAMS скрыт везде до запуска Twitch. -->
+    <div class="dock" data-tab="intel">
+      <!-- STREAMS (слой 2): ячейка под левой колонкой, сужает новостные полосы (владелец 23-08). Плитка = один
+           канал из data/streams.js, ротация — js/news.js, ⤢ и клик → окна windows.js (STREAMS) -->
+      <section class="dock-cell dock-streams" data-nosnippet>
+        <header class="feed-head feed-head-streams"><span data-i18n="dock.streams">LIVE STREAMS</span> <span class="votd-actions"><button class="votd-refresh" id="streamsNext" title="Next channel" data-i18n-title="dock.nextChannel">↻</button><button class="feed-expand" id="streamsExpand" title="Open full feed" data-i18n-title="common.openFullFeed">⤢</button></span></header>
+        <div class="streams-body" id="streamsBody"></div>
+      </section>
+      <section class="dock-cell dock-intel" data-nosnippet>
+        <header class="feed-head feed-head-intel"><span data-i18n="dock.liveWire">LIVE WIRE (REAL)</span> <button class="feed-expand" id="intelExpand" title="Open full feed" data-i18n-title="common.openFullFeed">⤢</button></header>
+        <div class="feed-scroll"><div class="feed-inner" id="intelInner"></div></div>
+      </section>
+      <section class="dock-cell dock-weazel" data-nosnippet>
+        <header class="feed-head feed-head-weazel"><span data-i18n-html="dock.weazel">WEAZEL NEWS &amp; MEMES <em>(SATIRE)</em></span><button class="feed-expand" id="weazelExpand" title="Open full feed" data-i18n-title="common.openFullFeed">⤢</button></header>
+        <div class="feed-scroll"><div class="feed-inner" id="weazelInner"></div></div>
+      </section>
+    </div>
+    <!-- SECRET (01-10, владелец: «секрет верни»): своя ячейка под правой колонкой, пара доку слева.
+         Заодно держит споттлайт в прежнем размере — без неё правая колонка тянулась до низа экрана. -->
+    <section class="dock-cell dock-secret">
+      <header class="feed-head feed-head-secret" data-i18n="dock.secret">3D VAULT</header>
+      <div class="secret-cell" id="secretBody"></div>
+    </section>
+  </main>
+
+  <!-- ===== APP WINDOW (окно = приложение) ===== -->
+  <div class="app-win" id="appWin">
+    <div class="aw-panel">
+      <header class="aw-head">
+        <span class="aw-title">// WINDOW</span>
+        <button class="aw-refresh" id="awRefresh" title="Show other videos" hidden data-i18n-title="window.showOther">↻</button>
+        <button class="aw-close" title="Close (Esc)" data-i18n-title="common.closeEsc">✕</button>
+      </header>
+      <div class="aw-tabs" id="awTabs" hidden></div>
+      <div class="aw-body"></div>
+    </div>
+  </div>
+
+  <!-- ===== SCREENSHOT LIGHTBOX (p2-9) ===== -->
+  <div class="lightbox" id="lightbox">
+    <button class="lb-close" title="Close (Esc)" data-i18n-title="common.closeEsc">✕</button>
+    <button class="lb-arrow lb-prev" title="Previous" data-i18n-title="common.previous">‹</button>
+    <img class="lb-img" id="lightboxImg" alt="">
+    <button class="lb-arrow lb-next" title="Next" data-i18n-title="common.next">›</button>
+    <div class="lb-caption">
+      <span id="lightboxTitle"></span>
+      <div class="feed-actions" id="lightboxActions"></div>
+      <button class="lb-map-btn" id="lightboxMapBtn" hidden data-i18n="lightbox.viewOnMap">VIEW ON MAP</button>
+      <a class="lb-wiki-btn" id="lightboxWikiBtn" href="#" hidden data-i18n="lightbox.viewOnWiki">VIEW ON WIKI</a>
+    </div>
+  </div>
+
+  <!-- ===== CHILL-РЕЖИМ (оверлей с закатом, открывается кнопкой radioChill в радио-виджете) ===== -->
+  <div class="cd-overlay" id="cdOverlay">
+    <button class="cdo-close" title="Close (Esc)" data-i18n-title="common.closeEsc">✕</button>
+    <div class="cdo-sun" aria-hidden="true"></div>
+    <div class="cdo-horizon" aria-hidden="true"></div>
+    <div class="cdo-sea" aria-hidden="true">
+      <div class="cdo-glow"></div>
+      <div class="cdo-waves back"></div>
+      <div class="cdo-waves"></div>
+    </div>
+    <!-- Дальние силуэты — кукурузник, вертолёт и яхта, изредка пролетают/проплывают за горизонтом (см. cdoFlyPlane/cdoFlyHeli/cdoSailYacht) -->
+    <svg class="cdo-plane" viewBox="0 0 24 24" aria-hidden="true"><path transform="rotate(90 12 12)" d="M21,16V14L13,9V3.5C13,2.67 12.33,2 11.5,2C10.67,2 10,2.67 10,3.5V9L2,14V16L10,13.5V19L7.5,20.5V22L11.5,21L15.5,22V20.5L13,19V13.5L21,16Z"/></svg>
+    <!-- Второй самолёт — выше, над солнцем, на уровне надписи Leonida Interactive -->
+    <svg class="cdo-plane cdo-plane-high" viewBox="0 0 24 24" aria-hidden="true"><path transform="rotate(90 12 12)" d="M21,16V14L13,9V3.5C13,2.67 12.33,2 11.5,2C10.67,2 10,2.67 10,3.5V9L2,14V16L10,13.5V19L7.5,20.5V22L11.5,21L15.5,22V20.5L13,19V13.5L21,16Z"/></svg>
+    <svg class="cdo-heli" viewBox="0 0 56 26" aria-hidden="true">
+      <rect x="1" y="3" width="30" height="2"/>
+      <rect x="17" y="5" width="2" height="4"/>
+      <ellipse cx="18" cy="15" rx="11" ry="6"/>
+      <rect x="27" y="13" width="22" height="3"/>
+      <rect x="47" y="6" width="2" height="10"/>
+      <rect x="6" y="21" width="4" height="3"/><rect x="20" y="21" width="4" height="3"/>
+    </svg>
+    <svg class="cdo-yacht" viewBox="0 0 32 22" aria-hidden="true">
+      <path d="M2,16 A14,6 0 0 0 30,16 Z"/>
+      <polygon points="16,16 16,0 28,16"/>
+    </svg>
+    <main class="cdo-wrap">
+      <div class="cdo-frame">
+        <!-- Не заголовок H1 (19-09): единственный H1 страницы — название сайта в футере, а это
+             декоративный логотип чилл-оверлея. Вид не изменился, селекторы — .cdo-title. -->
+        <div class="cdo-title">Leonida<span>Interactive</span></div>
+      </div>
+    </main>
+    <div class="cdo-foot">
+      <!-- Визуализатор реального спектра трека (Web Audio AnalyserNode), см. radio.js -->
+      <div class="cdo-viz" id="cdoViz" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <!-- radio-widget физически переносится сюда из .col-left при открытии, возвращается назад при закрытии (см. timer.js) -->
+      <div class="cdo-player-slot" id="cdoPlayerSlot"></div>
+    </div>
+  </div>
+
+  <!-- Хвост мобильной вёрстки: Support и бейдж переезжают сюда из шапки (скрипт в конце файла). -->
+  <div class="mobile-tail" id="mobileTail"></div>
+
+  <!-- ===== FOOTER ===== -->
+  <!-- Одна строка (19-09): слева <details> с H1 и текстом о сайте, по центру соцсети,
+       справа Privacy · Terms. До этого в статическом HTML главной не было ни одной фразы о сайте и ни одного
+       H1 — всё рисовал JS (docs/REVIEW_home_brand_fix_19-09.md). Копирайт, дисклеймер
+       «not affiliated» (он же второе предложение P3) и ссылки About/Methodology/Contact живут
+       ВНУТРИ тела details: новые элементы в строку футера не добавляем, только внутрь него
+       (CORE_SPEC, «Раскладка пульта»). Раскрытие нативное, без единой строки JS. -->
+  <footer class="site-footer">
+    <details class="home-about">
+      <summary><h1 data-i18n="about.h1">Leonida Interactive — GTA 6 Interactive Map &amp; Wiki</h1></summary>
+      <div class="home-about__body">
+        <p data-i18n="about.p1">Leonida Interactive is a fan-made GTA 6 hub. The interactive map of the state of Leonida comes with a drive mode, collectible cards, comparisons with earlier GTA maps and a story board. Explore the site and earn Respect. Plus a wiki with 2100 pages in 11 languages and daily news.</p>
+        <p data-i18n="about.p2">Explore Vice City and the rest of Leonida, read about Lucia Caminos and Jason Duval, and check vehicles, weapons, gangs and a breakdown of every trailer.</p>
+        <p data-i18n="about.p3">GTA 6 releases on November 19, 2026 for PS5 and Xbox Series X|S. Leonida Interactive is a fan project, not affiliated with Rockstar Games or Take-Two Interactive.</p>
+        <p class="home-about__meta">
+          © <span id="footerYear"></span> Leonida Interactive ·
+          <a href="/wiki/about/" data-i18n="about.linkAbout">About</a> ·
+          <a href="/wiki/methodology/" data-i18n="about.linkMethodology">Methodology</a> ·
+          <a href="#" id="footerContact" class="footer-contact" data-i18n="about.linkContact">Contact</a>
+        </p>
+      </div>
+    </details>
+
+    <!-- Соцсети иконками (19-09). rel="me" связывает сайт и профили в один бренд: по запросу
+         «leonida interactive» Google показывал YouTube-канал и не показывал сайт. Те же четыре
+         адреса и те же контуры, что в wiki-src/src/lib/socials.ts — пульт вне Astro, общего
+         импорта с ним нет (тот же случай, что Organization выше). Меняется хэндл — правится
+         здесь и там. -->
+    <nav class="footer-socials" aria-label="Leonida Interactive on social networks">
+      <a href="https://www.youtube.com/@leonidainteract" aria-label="YouTube" title="YouTube" target="_blank" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg></a>
+      <a href="https://www.tiktok.com/@leonidainteractive" aria-label="TikTok" title="TikTok" target="_blank" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16.6 5.8a4.3 4.3 0 0 1-1-2.8h-3.1v12.4a2.6 2.6 0 1 1-1.9-2.5V9.7a5.7 5.7 0 1 0 5 5.6V9.1a7.3 7.3 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.3-1.6z"/></svg></a>
+      <a href="https://x.com/LeonidaInteract" aria-label="X" title="X" target="_blank" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.9 2H22l-7.1 8.1L23.2 22h-6.6l-5.1-6.7L5.6 22H2.5l7.6-8.7L1.2 2h6.8l4.6 6.1L18.9 2zm-1.1 18.1h1.7L7.3 3.8H5.4l12.4 16.3z"/></svg></a>
+      <a href="https://www.instagram.com/leonidainteractive/" aria-label="Instagram" title="Instagram" target="_blank" rel="me noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.3-1-.4-2.2-.1-1.3-.1-1.7-.1-4.9s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.3 2.2-.4 1.3-.1 1.7-.1 4.9-.1zm0 3.2a6.6 6.6 0 1 0 0 13.2 6.6 6.6 0 0 0 0-13.2zm0 10.9a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm8.4-11.2a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg></a>
+    </nav>
+    <div class="footer-line">
+      <a href="/wiki/about/">About</a> · <a href="/wiki/contact/">Contact</a> · <a href="/wiki/privacy/">Privacy</a> · <a href="/wiki/terms/">Terms</a>
+    </div>
+  </footer>
+
+  <script src="data/config.js?v=36fa823e"></script>
+  <script src="data/trailers.js?v=abc60f66"></script>
+  <script src="data/news-data.js?v=4f395a62"></script>
+  <script src="data/official-shots.js?v=36d5441c"></script>
+  <script src="data/media-feed.js?v=dc86b2e0"></script>
+  <script src="data/stations.js?v=d29230a0"></script>
+  <script src="data/spotlight.js?v=cc902e02"></script>
+  <script src="data/streams.js?v=4dd55670"></script>
+  <script src="data/wiki-meta.js?v=58995f6e"></script>
+  <script src="data/models3d.js?v=ec7f065a"></script>
+  <!-- Карточки режима ARTICLES: build-locale-home.js меняет en -> <locale> в этой строке,
+       файлы пишет wiki-src/scripts/build-featured-articles.js на сборке. -->
+  <script src="data/featured-articles.en.js?v=4c93e641"></script>
+  <!-- Данные режима RELATIONS: тот же контракт (en -> <locale> подменяет build-locale-home.js,
+       файлы пишет wiki-src/scripts/build-graph-data.mjs из relationship-graph.json вики). -->
+  <script src="data/relationship-graph.en.js?v=5d7cbb12"></script>
+  <!-- Кадры режима GAMES (пятнашки дня): одинаковы для всех локалей, подпись места — имя собственное. -->
+  <script src="data/puzzle-pics.js?v=09b08dc8"></script>
+  <!--HUB_I18N--><!-- build-locale-home.js инлайнит сюда словарь рантайм-строк
+       (data/i18n-dynamic.<locale>.js) как window.HUB_I18N; на EN остаётся этим комментарием,
+       лишнего запроса и лишнего кода не появляется -->
+  <!-- Память языка: пульт объявляет свою локаль тем же ключом, что и вики (Footer.astro).
+       Нужна ровно для EN-only trust-страниц (/wiki/about и соседи) — с них читателя возвращает
+       в тот язык, где он был, а не в английский. Отдельного файла ради двух строк не завожу. -->
+  <script>
+    try { localStorage.setItem('lh_lang', (window.HUB_I18N || {}).locale || 'en'); } catch (e) {}
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="js/layout.js?v=cc6595bc"></script>
+  <script src="js/timer.js?v=12703fb9"></script>
+  <script src="js/respect.js?v=d2c7aa17"></script>
+  <script src="js/leaderboard.js?v=e2e7ab00"></script>
+  <script src="js/render.js?v=2823f3b9"></script>
+  <!-- Аккаунт (Supabase): SDK вендорен (на cdnjs его нет), db.js — единственная обёртка над ним,
+       store.js — синхронизация Respect. Все три необязательны: не загрузились — гостевой режим. -->
+  <script src="js/vendor/supabase.min.js"></script>
+  <script src="js/db.js?v=dc68b51d"></script>
+  <script src="js/store.js?v=6529e72c"></script>
+  <script src="js/media-live.js?v=e1a5624f"></script>
+  <script src="js/news.js?v=c024f373"></script>
+  <script src="js/news-live.js?v=e457acfa"></script>
+  <script src="js/secret3d.js?v=813f7777"></script>
+  <script src="js/windows.js?v=bb4124c8"></script>
+  <script src="js/progress.js?v=41e0ff4b"></script>
+  <script src="js/map.js?v=73f541b0"></script>
+  <!-- Машинерия режима RELATIONS: вендоренный d3-force и общее ядро графа (оба из
+       wiki-src/public/, в проде — корень деплоя, в dev — прокси serve.ps1). ДО view-mode.js:
+       тот дергает window.RelationshipGraph.init при первом входе в режим. -->
+  <script src="/vendor/d3-force-bundle.min.js"></script>
+  <script src="/graph/relationship-graph-core.js"></script>
+  <!-- после map.js: переключатель MAP | ARTICLES | RELATIONS читает LeonidaMap.map для
+       invalidateSize при возврате на карту (Leaflet после display:none ломает размеры). -->
+  <!-- до view-mode.js: тот читает window.Puzzle при определении доступных режимов (GAMES) -->
+  <script src="js/puzzle.js?v=036b3652"></script>
+  <script src="js/view-mode.js?v=a02a83d8"></script>
+  <script src="js/night-mode.js?v=0dcdcbef"></script>
+  <script src="js/hero-tiles.js?v=504b007e"></script>
+  <script src="js/ai-compare.js?v=d7be34fb"></script>
+  <!-- после map.js: кладёт контуры прошлых карт на полотно через LeonidaMap.gameLatLng -->
+  <script src="js/map-compare.js?v=9b0ba73b"></script>
+  <!-- после hero-tiles.js: читает HeroTiles.isCardRevealed при первом refresh() -->
+  <script src="js/card-fragments.js?v=96c426ec"></script>
+  <script src="js/drive-mode.js?v=0421fa62"></script>
+  <!-- после drive-mode.js: подписывается на leonida:drivechange и читает DriveMode.getCarPos -->
+  <script src="js/radar.js?v=68e1a1ff"></script>
+  <!-- тоже после drive-mode.js: DriveMode.vMaxM/surfaceAt/isRevealedAt + своя пана из ensureInit -->
+  <script src="js/police.js?v=a91caba2"></script>
+  <script src="js/radio.js?v=129d67cd"></script>
+  <!-- Мобильная шапка держала пять элементов; Support и бейдж «Independent fan-made» — не
+       навигация, им место в подвале (владелец, 28-08). 23-09 (владелец): туда же уехали и
+       кнопки Discord / Sign in — переносится весь блок .topbar-center целиком, вместе с меню
+       залогиненного (store.js вставляет его рядом с #subBtn, то есть внутрь этого же блока).
+       Переносим DOM-узлы, а не копии: на кнопках висят обработчики, на всех — data-i18n. Тем же
+       приёмом radio-widget переезжает в chill-оверлей (js/timer.js).
+       01-10 (владелец): иконки соцсетей на телефоне — не в шапке, а над футером, под кнопками
+       (раньше в шапку вставала их копия, а в футере оставался второй ряд). Теперь это ПЕРЕНОС
+       единственной футерной nav в хвост, а бейдж «Independent fan-made» встаёт в футер на её
+       место. На широком экране всё возвращается по домам. -->
+  <script>
+    (function () {
+      var tail = document.getElementById('mobileTail');
+      var footer = document.querySelector('.site-footer');
+      var items = [
+        { el: document.querySelector('.topbar-center'), to: tail },
+        { el: document.querySelector('.footer-socials'), to: tail },
+        { el: document.getElementById('legalBadge'), to: footer },
+        // 03-10 (владелец): таймер на телефоне — одной строкой в правом углу шапки (style.css, «Таймер (03-10)»)
+        { el: document.querySelector('.cd-widget'), to: document.querySelector('.topbar-right') }
+      ];
+      if (!tail || !footer || items.some(function (it) { return !it.el; })) return;
+      items.forEach(function (it) { it.home = it.el.parentNode; it.next = it.el.nextSibling; });
+      var place = function () {
+        var narrow = window.LHLayout.narrow();
+        items.forEach(function (it) {
+          if (narrow) it.to.appendChild(it.el); else it.home.insertBefore(it.el, it.next);
+        });
+      };
+      place();
+      window.LHLayout.onNarrowChange(place);
+    })();
+    // Кнопка радио в шапке (03-10): открывает/закрывает плеер у нижнего края и вместе с ним звук —
+    // плеер один (#radioWidget, js/radio.js), кнопка только жмёт его же #radioToggle. Иконка следит
+    // за data-state плеера: играет — эквалайзер, нет — треугольник.
+    (function () {
+      var fab = document.getElementById('radioFab');
+      var w = document.getElementById('radioWidget');
+      var tg = document.getElementById('radioToggle');
+      if (!fab || !w || !tg) return;
+      var sync = function () { fab.setAttribute('data-state', w.getAttribute('data-state') || 'off'); };
+      new MutationObserver(sync).observe(w, { attributes: true, attributeFilter: ['data-state'] });
+      sync();
+      fab.addEventListener('click', function () {
+        var open = document.body.classList.toggle('radio-open');
+        var on = (w.getAttribute('data-state') || 'off') !== 'off';
+        if (open !== on) tg.click();
+      });
+    })();
+    // Live CA frame: click copies the contract address and flashes "copied".
+    (function () {
+      var btn = document.getElementById('caFrame');
+      var val = document.getElementById('caValue');
+      if (!btn || !val) return;
+      var text = (val.textContent || '').trim();
+      var timer = 0;
+      btn.addEventListener('click', function () {
+        var flash = function () {
+          btn.classList.add('copied');
+          val.textContent = 'copied';
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            btn.classList.remove('copied');
+            val.textContent = text;
+          }, 1200);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(flash, flash);
+        } else {
+          flash();
+        }
+      });
+    })();
+  </script>
+
+  <!-- Cloudflare Web Analytics. Тег создаётся скриптом, а не лежит статикой, только по одной
+       причине: токен живёт в SITE_CONFIG (единственный источник правды пульта), а data-cf-beacon
+       нужен как атрибут. Пустой токен = запроса нет вообще. -->
+  <script>
+    (function () {
+      var token = (window.SITE_CONFIG || {}).cfBeaconToken;
+      if (!token) return;
+      var s = document.createElement('script');
+      s.defer = true;
+      s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+      s.setAttribute('data-cf-beacon', JSON.stringify({ token: token }));
+      document.body.appendChild(s);
+    })();
+  </script>
+</body>
+</html>

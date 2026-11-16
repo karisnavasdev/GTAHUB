@@ -1,0 +1,56 @@
+/* Баннер согласия (public/consent.js). Отдельный CSS, а не инлайн-стили в JS: файл общий
+   с пультом, а у него свои переменные темы — тут только собственные цвета, ничего из :root
+   вики не используется. Фиксированные размеры и bottom-фиксация — баннер не двигает контент,
+   поэтому CLS не растёт. */
+.lh-consent {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: min(760px, calc(100vw - 2rem));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid rgba(255, 158, 79, 0.35);
+  border-radius: 12px;
+  background: rgba(17, 9, 40, 0.97);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  color: #e9e4ff;
+  font: 400 0.85rem/1.45 system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+.lh-consent p {
+  margin: 0;
+  flex: 1 1 320px;
+}
+.lh-consent a {
+  color: #ff9e4f;
+}
+.lh-consent-btns {
+  display: flex;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+.lh-consent button {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(233, 228, 255, 0.35);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.lh-consent button:hover {
+  border-color: #ff9e4f;
+}
+/* Кнопки визуально равнозначны по размеру (требование GDPR — отказ не должен быть спрятан),
+   отличается только заливка. */
+.lh-consent-primary {
+  background: #ff9e4f;
+  border-color: #ff9e4f;
+  color: #1a0f33;
+  font-weight: 600;
+}

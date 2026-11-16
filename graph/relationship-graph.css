@@ -1,0 +1,386 @@
+/* ===== Relationship Map — общие стили графа (пара к relationship-graph-core.js) =====
+   Один файл на обе поверхности: вики-страница и режим RELATIONS пульта. Токены палитры
+   берутся из окружения (--pink/--orange/… одинаковы в global.css вики и style.css пульта),
+   фолбэки — те же значения, чтобы файл был самодостаточен.
+   Цвета типов связей: словарь фиксированный (relationship-graph.md); синий/фиолетовый/серый —
+   канонические цвета тиров пульта (CARD_TIERS), зелёного в палитре проекта нет — --rel-ally
+   единственное новое значение. */
+:root {
+  --rel-romantic: var(--pink, #ff2e88);
+  --rel-family: #4aa3ff;
+  --rel-ally: #4ad66d;
+  --rel-rival: var(--orange, #ff9e4f);
+  --rel-boss: #b06cff;
+  --rel-crew: var(--teal, #24e0d0);
+  --rel-associate: #9aa4b8;
+}
+.rg-stage {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, #1a0f3d 0%, #0b0620 80%);
+}
+.rg-stage:fullscreen { height: 100vh; border-radius: 0; }
+.rg-svg { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.rg-svg:active { cursor: grabbing; }
+
+.rg-edge { stroke-width: 2; stroke-opacity: 0.75; transition: stroke-opacity 0.15s ease; }
+.rg-t-romantic { stroke: var(--rel-romantic); }
+.rg-t-family { stroke: var(--rel-family); }
+.rg-t-ally { stroke: var(--rel-ally); }
+.rg-t-rival { stroke: var(--rel-rival); }
+.rg-t-boss { stroke: var(--rel-boss); }
+.rg-t-crew { stroke: var(--rel-crew); }
+.rg-t-associate { stroke: var(--rel-associate); }
+.rg-spec { stroke-dasharray: 6 5; }
+.rg-arrow { fill: var(--rel-boss); }
+.rg-edge.rg-off { display: none; }
+
+.rg-node { cursor: pointer; transition: opacity 0.2s ease; outline: none; }
+/* Тап по ноде — «пульс» аватара (ревью 05-09: у клика появляется физический отклик).
+   transform-box:fill-box — иначе SVG масштабирует от начала координат вьюпорта.
+   Подпись не трогаем — прыгающий текст читается хуже. */
+.rg-node.rg-pop .rg-ring,
+.rg-node.rg-pop image {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rgPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes rgPop { 35% { transform: scale(1.16); } }
+/* outline:none: после тапа фокус рисовал белый прямоугольник вокруг ноды (ревью 05-09);
+   клавиатурный индикатор остаётся своим — утолщение кольца по :focus-visible */
+.rg-node:focus-visible .rg-ring { stroke-width: 4; }
+.rg-ring { fill: #0b0620; stroke: var(--orange, #ff9e4f); stroke-width: 2.5; }
+.rg-node.rg-dim { opacity: 0.3; }
+.rg-label {
+  fill: var(--sand, #f5ecd7);
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  paint-order: stroke fill;
+  stroke: rgba(11, 6, 32, 0.85);
+  stroke-width: 3px;
+}
+/* hover: активная нода и её рёбра в полную силу, остальное гасится */
+.rg-hovering .rg-node:not(.rg-hot):not(.rg-warm) { opacity: 0.35; }
+.rg-hovering .rg-edge:not(.rg-hot) { stroke-opacity: 0.12; }
+.rg-node.rg-hot .rg-ring { stroke: var(--pink, #ff2e88); filter: drop-shadow(0 0 8px rgba(255, 46, 136, 0.7)); }
+
+.rg-filters {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(11, 6, 32, 0.82);
+  border: 1px solid rgba(255, 158, 79, 0.4);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 0.72rem;
+  z-index: 3;
+}
+.rg-filters-head {
+  font-family: var(--display, 'Bebas Neue', sans-serif);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  color: var(--orange, #ff9e4f);
+}
+.rg-filter { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--sand, #f5ecd7); }
+.rg-filter input { accent-color: var(--pink, #ff2e88); }
+.rg-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; background: var(--rel-associate); flex: none; }
+.rg-dot.rg-t-romantic { background: var(--rel-romantic); }
+.rg-dot.rg-t-family { background: var(--rel-family); }
+.rg-dot.rg-t-ally { background: var(--rel-ally); }
+.rg-dot.rg-t-rival { background: var(--rel-rival); }
+.rg-dot.rg-t-boss { background: var(--rel-boss); }
+.rg-dot.rg-t-crew { background: var(--rel-crew); }
+.rg-dot.rg-t-associate { background: var(--rel-associate); }
+.rg-reset {
+  margin-top: 0.3rem;
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  background: none;
+  border: 1px solid rgba(255, 46, 136, 0.5);
+  border-radius: 6px;
+  color: var(--pink, #ff2e88);
+  cursor: pointer;
+}
+.rg-reset:hover { background: rgba(255, 46, 136, 0.15); }
+.rg-filters-toggle { display: none; }
+
+.rg-fs {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--orange, #ff9e4f);
+  background: rgba(11, 6, 32, 0.75);
+  color: var(--orange, #ff9e4f);
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 3;
+}
+.rg-fs:hover { box-shadow: 0 0 12px rgba(255, 158, 79, 0.5); }
+
+/* Карточка персонажа: слева на десктопе, bottom sheet на мобиле */
+.rg-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(310px, 85%);
+  overflow-y: auto;
+  padding: 0.9rem;
+  background: rgba(11, 6, 32, 0.94);
+  border-right: 1px solid rgba(255, 46, 136, 0.35);
+  backdrop-filter: blur(8px);
+  animation: rgSlideIn 0.22s ease;
+  z-index: 4;
+}
+@keyframes rgSlideIn { from { transform: translateX(-100%); } }
+.rg-card-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: none;
+  border: 1px solid var(--pink, #ff2e88);
+  border-radius: 6px;
+  color: var(--pink, #ff2e88);
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+}
+.rg-card-img { width: 96px; height: 96px; border-radius: 50%; border: 2px solid var(--orange, #ff9e4f); }
+.rg-card-name {
+  font-family: var(--display, 'Bebas Neue', sans-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  margin: 0.5rem 0 0.1rem;
+  color: var(--sand, #f5ecd7);
+}
+.rg-card-role { font-family: var(--mono, 'IBM Plex Mono', monospace); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange, #ff9e4f); margin-bottom: 0.55rem; }
+.rg-card-desc { font-size: 0.82rem; line-height: 1.5; color: var(--muted, #a99fc4); margin: 0 0 0.7rem; }
+.rg-card-rels { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.85rem; }
+.rg-card-rel {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 0.74rem;
+  text-align: left;
+  padding: 0.3rem 0.45rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--sand, #f5ecd7);
+  cursor: pointer;
+}
+.rg-card-rel:hover { border-color: rgba(255, 46, 136, 0.5); }
+.rg-rel-word { color: var(--muted, #a99fc4); }
+.rg-card-rel .rg-badge { margin-left: auto; }
+/* Бейдж статуса не-confirmed связи: на вики поверх приезжают стили .wiki-badge (global.css),
+   этот базовый вид — для пульта, где их нет */
+.rg-badge {
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  border: 1px dashed var(--rel-associate);
+  color: var(--rel-associate);
+}
+/* Кнопка в статью вики — тот же визуальный паттерн, что .wiki-map-btn статей */
+.rg-card-open {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--pink, #ff2e88);
+  border-radius: 6px;
+  color: var(--pink, #ff2e88);
+  text-decoration: none;
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+}
+.rg-card-open:hover { background: rgba(255, 46, 136, 0.15); }
+
+@media (max-width: 720px) {
+  .rg-filters-toggle {
+    display: block;
+    position: absolute;
+    top: 0.7rem;
+    left: 0.7rem;
+    font-family: var(--mono, 'IBM Plex Mono', monospace);
+    font-size: 0.72rem;
+    padding: 0.35rem 0.6rem;
+    background: rgba(11, 6, 32, 0.82);
+    border: 1px solid rgba(255, 158, 79, 0.4);
+    border-radius: 8px;
+    color: var(--orange, #ff9e4f);
+    z-index: 3;
+  }
+  .rg-filters { display: none; top: 3rem; }
+  .rg-filters-open .rg-filters { display: flex; }
+  .rg-card {
+    top: auto;
+    right: 0;
+    width: auto;
+    max-height: 62%;
+    border-right: none;
+    border-top: 1px solid rgba(255, 46, 136, 0.35);
+    animation: rgSlideUp 0.22s ease;
+  }
+  @keyframes rgSlideUp { from { transform: translateY(100%); } }
+}
+/* ===== Квиз STREET KNOWLEDGE (opts.quiz, только пульт) ===== */
+/* свои display у элементов квиза перебивали бы [hidden] — возвращаем ему силу явно */
+.rg-play[hidden], .rg-qhud[hidden], .rg-qhint[hidden], .rg-qpanel[hidden] { display: none; }
+.rg-play {
+  position: absolute;
+  left: 50%;
+  bottom: 0.9rem;
+  transform: translateX(-50%);
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  padding: 0.45rem 0.9rem;
+  background: rgba(11, 6, 32, 0.82);
+  border: 1px solid var(--pink, #ff2e88);
+  border-radius: 8px;
+  color: var(--pink, #ff2e88);
+  cursor: pointer;
+  z-index: 3;
+}
+.rg-play:hover { background: rgba(255, 46, 136, 0.15); box-shadow: 0 0 12px rgba(255, 46, 136, 0.4); }
+.rg-qhud {
+  position: absolute;
+  left: 50%;
+  bottom: 0.9rem;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 0.8rem;
+  padding: 0.4rem 0.7rem;
+  background: rgba(11, 6, 32, 0.85);
+  border: 1px solid rgba(255, 158, 79, 0.4);
+  border-radius: 8px;
+  color: var(--sand, #f5ecd7);
+  z-index: 3;
+}
+.rg-q-exit {
+  width: 22px;
+  height: 22px;
+  font-size: 0.7rem;
+  background: none;
+  border: 1px solid var(--pink, #ff2e88);
+  border-radius: 6px;
+  color: var(--pink, #ff2e88);
+  cursor: pointer;
+}
+.rg-qhint {
+  position: absolute;
+  left: 50%;
+  bottom: 3.4rem;
+  transform: translateX(-50%);
+  max-width: min(420px, 86%);
+  text-align: center;
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  padding: 0.4rem 0.7rem;
+  background: rgba(11, 6, 32, 0.85);
+  border: 1px solid rgba(255, 158, 79, 0.4);
+  border-radius: 8px;
+  color: var(--sand, #f5ecd7);
+  z-index: 3;
+}
+/* Тизер входа: связи «пробегаются» (draw-in по pathLength=1) и гаснут, стаггер задаёт
+   JS через animation-delay. dasharray:1 на время анимации перекрывает пунктир .rg-spec —
+   после снятия класса inline-стилей не остаётся */
+/* 2.4s (был 1.4s, владелец 05-09: «+1 сек») — продублировано числом в setTimeout
+   quizTease (core.js), менять только парой */
+.rg-teasing .rg-edge {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: rgTease 2.4s ease forwards;
+}
+@keyframes rgTease {
+  0% { stroke-dashoffset: 1; stroke-opacity: 0; }
+  15% { stroke-opacity: 0.85; }
+  45% { stroke-dashoffset: 0; stroke-opacity: 0.85; }
+  70% { stroke-dashoffset: 0; stroke-opacity: 0.85; }
+  100% { stroke-dashoffset: 0; stroke-opacity: 0; }
+}
+/* в квизе рёбра спрятаны, кроме найденных; фильтры не нужны (и подсказали бы ответы).
+   Идёт после мобильного .rg-filters-open — при равной специфичности побеждает как поздний */
+.rg-quiz .rg-edge:not(.rg-found) { display: none; }
+.rg-quiz .rg-filters, .rg-quiz .rg-filters-toggle { display: none; }
+.rg-node.rg-sel .rg-ring { stroke: var(--pink, #ff2e88); stroke-width: 4; filter: drop-shadow(0 0 8px rgba(255, 46, 136, 0.7)); }
+/* Найденное ребро «прорисовывается» от персонажа к персонажу (тот же draw-in по
+   pathLength=1, что у тизера) — dasharray:1 остаётся насовсем, линия при offset 0 сплошная */
+.rg-found { stroke-dasharray: 1; animation: rgFound 0.55s ease; }
+@keyframes rgFound { from { stroke-dashoffset: 1; stroke-width: 5; } to { stroke-dashoffset: 0; } }
+/* Верная пара: оба бабла вспыхивают в цвет находки (владелец 05-09) и подрастают целиком —
+   кольцо вместе с аватаром (владелец 11-09: «растёт только обводка, а не сам круг»: rgFlash
+   перебивал rgPop на кольце, а у первого выбранного персонажа пульс аватара давно отыграл).
+   Правило стоит ПОСЛЕ rgPop-блока и побеждает его на обоих элементах. */
+.rg-node.rg-flash .rg-ring,
+.rg-node.rg-flash image {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rgFlashPop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.rg-node.rg-flash .rg-ring { animation-name: rgFlash; }
+@keyframes rgFlashPop { 25% { transform: scale(1.2); } }
+@keyframes rgFlash {
+  25% { transform: scale(1.2); stroke: var(--teal, #24e0d0); stroke-width: 5; filter: drop-shadow(0 0 16px rgba(36, 224, 208, 0.95)); }
+}
+.rg-wrong { stroke: #ff4b4b; stroke-width: 2.5; stroke-dasharray: 4 4; animation: rgWrong 0.7s ease forwards; }
+@keyframes rgWrong { to { stroke-opacity: 0; } }
+.rg-qpanel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.1rem 1.6rem;
+  background: rgba(11, 6, 32, 0.94);
+  border: 1px solid rgba(255, 46, 136, 0.5);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  z-index: 5;
+}
+.rg-q-title { font-family: var(--display, 'Bebas Neue', sans-serif); font-size: 1.9rem; letter-spacing: 0.06em; color: var(--orange, #ff9e4f); }
+.rg-q-title.rg-q-win { color: var(--teal, #24e0d0); }
+.rg-q-score { font-family: var(--mono, 'IBM Plex Mono', monospace); font-size: 0.9rem; color: var(--sand, #f5ecd7); }
+.rg-q-done {
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 0.75rem;
+  padding: 0.45rem 0.9rem;
+  background: none;
+  border: 1px solid var(--pink, #ff2e88);
+  border-radius: 6px;
+  color: var(--pink, #ff2e88);
+  cursor: pointer;
+}
+.rg-q-done:hover { background: rgba(255, 46, 136, 0.15); }
+
+@media (prefers-reduced-motion: reduce) {
+  .rg-card { animation: none; }
+  .rg-node, .rg-edge { transition: none; }
+  .rg-found, .rg-wrong { animation: none; }
+  .rg-node.rg-pop .rg-ring, .rg-node.rg-pop image { animation: none; }
+  .rg-node.rg-flash .rg-ring, .rg-node.rg-flash image { animation: none; }
+}
